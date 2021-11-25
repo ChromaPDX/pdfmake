@@ -15,23 +15,24 @@ var defaultClientFonts = {
   }
 };
 
-function Document(docDefinition, tableLayouts, fonts, vfs) {
+function Document(docDefinition, tableLayouts, fonts, vfs, hardTables) {
   this.docDefinition = docDefinition;
   this.tableLayouts = tableLayouts || null;
   this.fonts = fonts || defaultClientFonts;
   this.vfs = vfs;
+  this.hardTables = hardTables;
 }
 
 function canCreatePdf() {
   // Ensure the browser provides the level of support needed
   try {
-    var arr = new Uint8Array(1)
-    var proto = { foo: function() { return 42 } }
-    Object.setPrototypeOf(proto, Uint8Array.prototype)
-    Object.setPrototypeOf(arr, proto)
-    return arr.foo() === 42
+    var arr = new Uint8Array(1);
+    var proto = { foo: function() { return 42; } };
+    Object.setPrototypeOf(proto, Uint8Array.prototype);
+    Object.setPrototypeOf(arr, proto);
+    return arr.foo() === 42;
   } catch (e) {
-    return false
+    return false;
   }
 }
 
@@ -41,6 +42,8 @@ Document.prototype._createDoc = function(options, cb) {
     options.tableLayouts = this.tableLayouts;
   }
 
+  options.hardTables = this.hardTables;
+
   var PdfPrinter = require('../printer');
 
   var printer = new PdfPrinter(this.fonts);
@@ -48,7 +51,6 @@ Document.prototype._createDoc = function(options, cb) {
 
   if (!isFunction(cb)) {
     var doc = printer.createPdfKitDocument(this.docDefinition, options);
-
     return doc;
   }
 
