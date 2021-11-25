@@ -14596,7 +14596,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
 
 /***/ }),
 
-/***/ 7879:
+/***/ 3762:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -55869,7 +55869,7 @@ function simpleEnd(buf) {
 
 /***/ }),
 
-/***/ 3171:
+/***/ 5920:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(a,b){if(true)!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (b),
@@ -73027,195 +73027,195 @@ module.exports = URLBrowserResolver;
 var isFunction = __webpack_require__(6225).isFunction;
 var isUndefined = __webpack_require__(6225).isUndefined;
 var isNull = __webpack_require__(6225).isNull;
-var FileSaver = __webpack_require__(3171);
+var FileSaver = __webpack_require__(5920);
 var saveAs = FileSaver.saveAs;
 
 var defaultClientFonts = {
-	Roboto: {
-		normal: 'Roboto-Regular.ttf',
-		bold: 'Roboto-Medium.ttf',
-		italics: 'Roboto-Italic.ttf',
-		bolditalics: 'Roboto-MediumItalic.ttf'
-	}
+  Roboto: {
+    normal: 'Roboto-Regular.ttf',
+    bold: 'Roboto-Medium.ttf',
+    italics: 'Roboto-Italic.ttf',
+    bolditalics: 'Roboto-MediumItalic.ttf'
+  }
 };
 
 function Document(docDefinition, tableLayouts, fonts, vfs) {
-	this.docDefinition = docDefinition;
-	this.tableLayouts = tableLayouts || null;
-	this.fonts = fonts || defaultClientFonts;
-	this.vfs = vfs;
+  this.docDefinition = docDefinition;
+  this.tableLayouts = tableLayouts || null;
+  this.fonts = fonts || defaultClientFonts;
+  this.vfs = vfs;
 }
 
 function canCreatePdf() {
-	// Ensure the browser provides the level of support needed
-	try {
-		var arr = new Uint8Array(1)
-		var proto = { foo: function () { return 42 } }
-		Object.setPrototypeOf(proto, Uint8Array.prototype)
-		Object.setPrototypeOf(arr, proto)
-		return arr.foo() === 42
-	} catch (e) {
-		return false
-	}
+  // Ensure the browser provides the level of support needed
+  try {
+    var arr = new Uint8Array(1)
+    var proto = { foo: function() { return 42 } }
+    Object.setPrototypeOf(proto, Uint8Array.prototype)
+    Object.setPrototypeOf(arr, proto)
+    return arr.foo() === 42
+  } catch (e) {
+    return false
+  }
 }
 
-Document.prototype._createDoc = function (options, cb) {
-	options = options || {};
-	if (this.tableLayouts) {
-		options.tableLayouts = this.tableLayouts;
-	}
+Document.prototype._createDoc = function(options, cb) {
+  options = options || {};
+  if (this.tableLayouts) {
+    options.tableLayouts = this.tableLayouts;
+  }
 
-	var PdfPrinter = __webpack_require__(8617);
+  var PdfPrinter = __webpack_require__(8617);
 
-	var printer = new PdfPrinter(this.fonts);
-	__webpack_require__(3857).bindFS(this.vfs); // bind virtual file system to file system
+  var printer = new PdfPrinter(this.fonts);
+  __webpack_require__(3857).bindFS(this.vfs); // bind virtual file system to file system
 
-	if (!isFunction(cb)) {
-		var doc = printer.createPdfKitDocument(this.docDefinition, options);
+  if (!isFunction(cb)) {
+    var doc = printer.createPdfKitDocument(this.docDefinition, options);
 
-		return doc;
-	}
+    return doc;
+  }
 
-	var URLBrowserResolver = __webpack_require__(6255);
-	var urlResolver = new URLBrowserResolver(__webpack_require__(3857));
+  var URLBrowserResolver = __webpack_require__(6255);
+  var urlResolver = new URLBrowserResolver(__webpack_require__(3857));
 
-	for (var font in this.fonts) {
-		if (this.fonts.hasOwnProperty(font)) {
-			if (this.fonts[font].normal) {
-				urlResolver.resolve(this.fonts[font].normal);
-			}
-			if (this.fonts[font].bold) {
-				urlResolver.resolve(this.fonts[font].bold);
-			}
-			if (this.fonts[font].italics) {
-				urlResolver.resolve(this.fonts[font].italics);
-			}
-			if (this.fonts[font].bolditalics) {
-				urlResolver.resolve(this.fonts[font].bolditalics);
-			}
-		}
-	}
+  for (var font in this.fonts) {
+    if (this.fonts.hasOwnProperty(font)) {
+      if (this.fonts[font].normal) {
+        urlResolver.resolve(this.fonts[font].normal);
+      }
+      if (this.fonts[font].bold) {
+        urlResolver.resolve(this.fonts[font].bold);
+      }
+      if (this.fonts[font].italics) {
+        urlResolver.resolve(this.fonts[font].italics);
+      }
+      if (this.fonts[font].bolditalics) {
+        urlResolver.resolve(this.fonts[font].bolditalics);
+      }
+    }
+  }
 
-	if (this.docDefinition.images) {
-		for (var image in this.docDefinition.images) {
-			if (this.docDefinition.images.hasOwnProperty(image)) {
-				urlResolver.resolve(this.docDefinition.images[image]);
-			}
-		}
-	}
+  if (this.docDefinition.images) {
+    for (var image in this.docDefinition.images) {
+      if (this.docDefinition.images.hasOwnProperty(image)) {
+        urlResolver.resolve(this.docDefinition.images[image]);
+      }
+    }
+  }
 
-	var _this = this;
+  var _this = this;
 
-	urlResolver.resolved().then(function () {
-		var doc = printer.createPdfKitDocument(_this.docDefinition, options);
+  urlResolver.resolved().then(function() {
+    var doc = printer.createPdfKitDocument(_this.docDefinition, options);
 
-		cb(doc);
-	}, function (result) {
-		throw result;
-	});
+    cb(doc);
+  }, function(result) {
+    throw result;
+  });
 };
 
-Document.prototype._flushDoc = function (doc, callback) {
-	var chunks = [];
-	var result;
+Document.prototype._flushDoc = function(doc, callback) {
+  var chunks = [];
+  var result;
 
-	doc.on('readable', function () {
-		var chunk;
-		while ((chunk = doc.read(9007199254740991)) !== null) {
-			chunks.push(chunk);
-		}
-	});
-	doc.on('end', function () {
-		result = Buffer.concat(chunks);
-		callback(result, doc._pdfMakePages);
-	});
-	doc.end();
+  doc.on('readable', function() {
+    var chunk;
+    while ((chunk = doc.read(9007199254740991)) !== null) {
+      chunks.push(chunk);
+    }
+  });
+  doc.on('end', function() {
+    result = Buffer.concat(chunks);
+    callback(result, doc._pdfMakePages);
+  });
+  doc.end();
 };
 
-Document.prototype._getPages = function (options, cb) {
-	if (!cb) {
-		throw '_getPages is an async method and needs a callback argument';
-	}
-	var _this = this;
+Document.prototype._getPages = function(options, cb) {
+  if (!cb) {
+    throw '_getPages is an async method and needs a callback argument';
+  }
+  var _this = this;
 
-	this._createDoc(options, function (doc) {
-		_this._flushDoc(doc, function (ignoreBuffer, pages) {
-			cb(pages);
-		});
-	});
+  this._createDoc(options, function(doc) {
+    _this._flushDoc(doc, function(ignoreBuffer, pages) {
+      cb(pages);
+    });
+  });
 };
 
-Document.prototype._bufferToBlob = function (buffer) {
-	var blob;
-	try {
-		blob = new Blob([buffer], { type: 'application/pdf' });
-	} catch (e) {
-		// Old browser which can't handle it without making it an byte array (ie10)
-		if (e.name === 'InvalidStateError') {
-			var byteArray = new Uint8Array(buffer);
-			blob = new Blob([byteArray.buffer], { type: 'application/pdf' });
-		}
-	}
+Document.prototype._bufferToBlob = function(buffer) {
+  var blob;
+  try {
+    blob = new Blob([buffer], { type: 'application/pdf' });
+  } catch (e) {
+    // Old browser which can't handle it without making it an byte array (ie10)
+    if (e.name === 'InvalidStateError') {
+      var byteArray = new Uint8Array(buffer);
+      blob = new Blob([byteArray.buffer], { type: 'application/pdf' });
+    }
+  }
 
-	if (!blob) {
-		throw 'Could not generate blob';
-	}
+  if (!blob) {
+    throw 'Could not generate blob';
+  }
 
-	return blob;
+  return blob;
 };
 
-Document.prototype._openWindow = function () {
-	// we have to open the window immediately and store the reference
-	// otherwise popup blockers will stop us
-	var win = window.open('', '_blank');
-	if (win === null) {
-		throw 'Open PDF in new window blocked by browser';
-	}
+Document.prototype._openWindow = function() {
+  // we have to open the window immediately and store the reference
+  // otherwise popup blockers will stop us
+  var win = window.open('', '_blank');
+  if (win === null) {
+    throw 'Open PDF in new window blocked by browser';
+  }
 
-	return win;
+  return win;
 };
 
-Document.prototype._openPdf = function (options, win) {
-	if (!win) {
-		win = this._openWindow();
-	}
-	try {
-		this.getBlob(function (result) {
-			var urlCreator = window.URL || window.webkitURL;
-			var pdfUrl = urlCreator.createObjectURL(result);
-			win.location.href = pdfUrl;
+Document.prototype._openPdf = function(options, win) {
+  if (!win) {
+    win = this._openWindow();
+  }
+  try {
+    this.getBlob(function(result) {
+      var urlCreator = window.URL || window.webkitURL;
+      var pdfUrl = urlCreator.createObjectURL(result);
+      win.location.href = pdfUrl;
 
-			/* temporarily disabled
-			if (win !== window) {
-				setTimeout(function () {
-					if (isNull(win.window)) { // is closed by AdBlock
-						window.location.href = pdfUrl; // open in actual window
-					}
-				}, 500);
-			}
-			*/
-		}, options);
-	} catch (e) {
-		win.close();
-		throw e;
-	}
+      /* temporarily disabled
+      if (win !== window) {
+      	setTimeout(function () {
+      		if (isNull(win.window)) { // is closed by AdBlock
+      			window.location.href = pdfUrl; // open in actual window
+      		}
+      	}, 500);
+      }
+      */
+    }, options);
+  } catch (e) {
+    win.close();
+    throw e;
+  }
 };
 
-Document.prototype.open = function (options, win) {
-	options = options || {};
-	options.autoPrint = false;
-	win = win || null;
+Document.prototype.open = function(options, win) {
+  options = options || {};
+  options.autoPrint = false;
+  win = win || null;
 
-	this._openPdf(options, win);
+  this._openPdf(options, win);
 };
 
 
-Document.prototype.print = function (options, win) {
-	options = options || {};
-	options.autoPrint = true;
-	win = win || null;
+Document.prototype.print = function(options, win) {
+  options = options || {};
+  options.autoPrint = true;
+  win = win || null;
 
-	this._openPdf(options, win);
+  this._openPdf(options, win);
 };
 
 /**
@@ -73223,93 +73223,93 @@ Document.prototype.print = function (options, win) {
  * or
  * download(cb, options = {})
  */
-Document.prototype.download = function (defaultFileName, cb, options) {
-	if (isFunction(defaultFileName)) {
-		if (!isUndefined(cb)) {
-			options = cb;
-		}
-		cb = defaultFileName;
-		defaultFileName = null;
-	}
+Document.prototype.download = function(defaultFileName, cb, options) {
+  if (isFunction(defaultFileName)) {
+    if (!isUndefined(cb)) {
+      options = cb;
+    }
+    cb = defaultFileName;
+    defaultFileName = null;
+  }
 
-	defaultFileName = defaultFileName || 'file.pdf';
-	this.getBlob(function (result) {
-		saveAs(result, defaultFileName);
+  defaultFileName = defaultFileName || 'file.pdf';
+  this.getBlob(function(result) {
+    saveAs(result, defaultFileName);
 
-		if (isFunction(cb)) {
-			cb();
-		}
-	}, options);
+    if (isFunction(cb)) {
+      cb();
+    }
+  }, options);
 };
 
-Document.prototype.getBase64 = function (cb, options) {
-	if (!cb) {
-		throw 'getBase64 is an async method and needs a callback argument';
-	}
-	this.getBuffer(function (buffer) {
-		cb(buffer.toString('base64'));
-	}, options);
+Document.prototype.getBase64 = function(cb, options) {
+  if (!cb) {
+    throw 'getBase64 is an async method and needs a callback argument';
+  }
+  this.getBuffer(function(buffer) {
+    cb(buffer.toString('base64'));
+  }, options);
 };
 
-Document.prototype.getDataUrl = function (cb, options) {
-	if (!cb) {
-		throw 'getDataUrl is an async method and needs a callback argument';
-	}
-	this.getBuffer(function (buffer) {
-		cb('data:application/pdf;base64,' + buffer.toString('base64'));
-	}, options);
+Document.prototype.getDataUrl = function(cb, options) {
+  if (!cb) {
+    throw 'getDataUrl is an async method and needs a callback argument';
+  }
+  this.getBuffer(function(buffer) {
+    cb('data:application/pdf;base64,' + buffer.toString('base64'));
+  }, options);
 };
 
-Document.prototype.getBlob = function (cb, options) {
-	if (!cb) {
-		throw 'getBlob is an async method and needs a callback argument';
-	}
-	var that = this;
-	this.getBuffer(function (result) {
-		var blob = that._bufferToBlob(result);
-		cb(blob);
-	}, options);
+Document.prototype.getBlob = function(cb, options) {
+  if (!cb) {
+    throw 'getBlob is an async method and needs a callback argument';
+  }
+  var that = this;
+  this.getBuffer(function(result) {
+    var blob = that._bufferToBlob(result);
+    cb(blob);
+  }, options);
 };
 
-Document.prototype.getBuffer = function (cb, options) {
-	if (!cb) {
-		throw 'getBuffer is an async method and needs a callback argument';
-	}
+Document.prototype.getBuffer = function(cb, options) {
+  if (!cb) {
+    throw 'getBuffer is an async method and needs a callback argument';
+  }
 
-	var _this = this;
+  var _this = this;
 
-	this._createDoc(options, function (doc) {
-		_this._flushDoc(doc, function (buffer) {
-			cb(buffer);
-		});
-	});
+  this._createDoc(options, function(doc) {
+    _this._flushDoc(doc, function(buffer) {
+      cb(buffer);
+    });
+  });
 };
 
-Document.prototype.getStream = function (options, cb) {
-	if (!isFunction(cb)) {
-		var doc = this._createDoc(options);
-		return doc;
-	}
+Document.prototype.getStream = function(options, cb) {
+  if (!isFunction(cb)) {
+    var doc = this._createDoc(options);
+    return doc;
+  }
 
-	this._createDoc(options, function (doc) {
-		cb(doc);
-	});
+  this._createDoc(options, function(doc) {
+    cb(doc);
+  });
 };
 
 module.exports = {
-	createPdf: function (docDefinition, tableLayouts, fonts, vfs) {
-		if (!canCreatePdf()) {
-			throw 'Your browser does not provide the level of support needed';
-		}
-		return new Document(
-			docDefinition,
-			tableLayouts || __webpack_require__.g.pdfMake.tableLayouts,
-			fonts || __webpack_require__.g.pdfMake.fonts,
-			vfs || __webpack_require__.g.pdfMake.vfs
-		);
-	}
+  createPdf: function(docDefinition, tableLayouts, fonts, vfs, hardTables) {
+    if (!canCreatePdf()) {
+      throw 'Your browser does not provide the level of support needed';
+    }
+    return new Document(
+      docDefinition,
+      tableLayouts || __webpack_require__.g.pdfMake.tableLayouts,
+      fonts || __webpack_require__.g.pdfMake.fonts,
+      vfs || __webpack_require__.g.pdfMake.vfs,
+      hardTables || true
+    );
+  }
 };
-
 
 /***/ }),
 
@@ -74701,7 +74701,7 @@ DocumentContext.prototype.saveContextInEndingCell = function(endingCell) {
   };
 };
 
-DocumentContext.prototype.completeColumnGroup = function(height, hardTables = false) {
+DocumentContext.prototype.completeColumnGroup = function(height, hardTables) {
   var saved = this.snapshots.pop();
 
   this.calculateBottomMost(saved);
@@ -75566,7 +75566,7 @@ function addAll(target, otherArray) {
  * @param {Object} pageSize - an object defining page width and height
  * @param {Object} pageMargins - an object defining top, left, right and bottom margins
  */
-function LayoutBuilder(pageSize, pageMargins, imageMeasure, svgMeasure, hardTables = false) {
+function LayoutBuilder(pageSize, pageMargins, imageMeasure, svgMeasure, hardTables) {
   this.pageSize = pageSize;
   this.pageMargins = pageMargins;
   this.tracker = new TraversalTracker();
@@ -76639,7 +76639,7 @@ function _interopDefault(ex) {
 	return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex;
 }
 
-var PdfKit = _interopDefault(__webpack_require__(7879));
+var PdfKit = _interopDefault(__webpack_require__(3762));
 
 function getEngineInstance() {
 	return PdfKit;
