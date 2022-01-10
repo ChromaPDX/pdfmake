@@ -14596,7 +14596,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
 
 /***/ }),
 
-/***/ 2652:
+/***/ 9866:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -55869,7 +55869,7 @@ function simpleEnd(buf) {
 
 /***/ }),
 
-/***/ 3732:
+/***/ 9287:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(a,b){if(true)!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (b),
@@ -73027,7 +73027,7 @@ module.exports = URLBrowserResolver;
 var isFunction = __webpack_require__(6225).isFunction;
 var isUndefined = __webpack_require__(6225).isUndefined;
 var isNull = __webpack_require__(6225).isNull;
-var FileSaver = __webpack_require__(3732);
+var FileSaver = __webpack_require__(9287);
 var saveAs = FileSaver.saveAs;
 
 var defaultClientFonts = {
@@ -75568,7 +75568,7 @@ function addAll(target, otherArray) {
  * @param {Object} pageSize - an object defining page width and height
  * @param {Object} pageMargins - an object defining top, left, right and bottom margins
  */
-function LayoutBuilder(pageSize, pageMargins, imageMeasure, svgMeasure, hardTables) {
+function LayoutBuilder(pageSize, pageMargins, imageMeasure, svgMeasure, hardTables = true) {
   this.pageSize = pageSize;
   this.pageMargins = pageMargins;
   this.tracker = new TraversalTracker();
@@ -76641,7 +76641,7 @@ function _interopDefault(ex) {
 	return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex;
 }
 
-var PdfKit = _interopDefault(__webpack_require__(2652));
+var PdfKit = _interopDefault(__webpack_require__(9866));
 
 function getEngineInstance() {
 	return PdfKit;

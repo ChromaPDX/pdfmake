@@ -34,7 +34,7 @@ function addAll(target, otherArray) {
  * @param {Object} pageSize - an object defining page width and height
  * @param {Object} pageMargins - an object defining top, left, right and bottom margins
  */
-function LayoutBuilder(pageSize, pageMargins, imageMeasure, svgMeasure, hardTables) {
+function LayoutBuilder(pageSize, pageMargins, imageMeasure, svgMeasure, hardTables = true) {
   this.pageSize = pageSize;
   this.pageMargins = pageMargins;
   this.tracker = new TraversalTracker();
