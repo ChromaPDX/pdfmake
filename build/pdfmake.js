@@ -14596,7 +14596,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
 
 /***/ }),
 
-/***/ 9866:
+/***/ 1673:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -28201,7 +28201,7 @@ BrotliDictionary.init();
 
 /***/ }),
 
-/***/ 5340:
+/***/ 8375:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 var base64 = __webpack_require__(9742);
@@ -28251,7 +28251,7 @@ module.exports="W5/fcQLn5gKf2XUbAiQ1XULX+TZz6ADToDsgqk6qVfeC0e4m6OO2wcQ1J76ZBVRV
    Collection of static dictionary words.
 */
 
-var data = __webpack_require__(5340);
+var data = __webpack_require__(8375);
 exports.init = function() {
   exports.dictionary = data.init();
 };
@@ -55869,7 +55869,7 @@ function simpleEnd(buf) {
 
 /***/ }),
 
-/***/ 9287:
+/***/ 5340:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(a,b){if(true)!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (b),
@@ -73027,7 +73027,7 @@ module.exports = URLBrowserResolver;
 var isFunction = __webpack_require__(6225).isFunction;
 var isUndefined = __webpack_require__(6225).isUndefined;
 var isNull = __webpack_require__(6225).isNull;
-var FileSaver = __webpack_require__(9287);
+var FileSaver = __webpack_require__(5340);
 var saveAs = FileSaver.saveAs;
 
 var defaultClientFonts = {
@@ -73039,7 +73039,7 @@ var defaultClientFonts = {
   }
 };
 
-function Document(docDefinition, tableLayouts, fonts, vfs, hardTables) {
+function Document(docDefinition, tableLayouts, fonts, vfs, hardTables = true) {
   this.docDefinition = docDefinition;
   this.tableLayouts = tableLayouts || null;
   this.fonts = fonts || defaultClientFonts;
@@ -73299,7 +73299,7 @@ Document.prototype.getStream = function(options, cb) {
 };
 
 module.exports = {
-  createPdf: function(docDefinition, tableLayouts, fonts, vfs, hardTables) {
+  createPdf: function(docDefinition, tableLayouts, fonts, vfs, hardTables = true) {
     if (!canCreatePdf()) {
       throw 'Your browser does not provide the level of support needed';
     }
@@ -74703,7 +74703,7 @@ DocumentContext.prototype.saveContextInEndingCell = function(endingCell) {
   };
 };
 
-DocumentContext.prototype.completeColumnGroup = function(height, hardTables) {
+DocumentContext.prototype.completeColumnGroup = function(height, hardTables = true) {
   var saved = this.snapshots.pop();
 
   this.calculateBottomMost(saved);
@@ -76641,7 +76641,7 @@ function _interopDefault(ex) {
 	return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex;
 }
 
-var PdfKit = _interopDefault(__webpack_require__(9866));
+var PdfKit = _interopDefault(__webpack_require__(1673));
 
 function getEngineInstance() {
 	return PdfKit;

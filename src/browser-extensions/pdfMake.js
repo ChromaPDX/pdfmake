@@ -15,7 +15,7 @@ var defaultClientFonts = {
   }
 };
 
-function Document(docDefinition, tableLayouts, fonts, vfs, hardTables) {
+function Document(docDefinition, tableLayouts, fonts, vfs, hardTables = true) {
   this.docDefinition = docDefinition;
   this.tableLayouts = tableLayouts || null;
   this.fonts = fonts || defaultClientFonts;
@@ -275,7 +275,7 @@ Document.prototype.getStream = function(options, cb) {
 };
 
 module.exports = {
-  createPdf: function(docDefinition, tableLayouts, fonts, vfs, hardTables) {
+  createPdf: function(docDefinition, tableLayouts, fonts, vfs, hardTables = true) {
     if (!canCreatePdf()) {
       throw 'Your browser does not provide the level of support needed';
     }

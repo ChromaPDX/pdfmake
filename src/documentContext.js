@@ -94,7 +94,7 @@ DocumentContext.prototype.saveContextInEndingCell = function(endingCell) {
   };
 };
 
-DocumentContext.prototype.completeColumnGroup = function(height, hardTables) {
+DocumentContext.prototype.completeColumnGroup = function(height, hardTables = true) {
   var saved = this.snapshots.pop();
 
   this.calculateBottomMost(saved);
