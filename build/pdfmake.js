@@ -14596,7 +14596,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
 
 /***/ }),
 
-/***/ 1555:
+/***/ 9486:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -23701,10 +23701,13 @@ var SVGtoPDF = function SVGtoPDF(doc, svg, x, y, options) {
 
   function isArrayLike(v) {
     return typeof v === 'object' && v !== null && typeof v.length === 'number';
-  }
+  } // This implementation is incomplete.
+  // It can only accept absolute and percentage tuples.
+  // It CAN'T handle single values or keyword.
+
 
   function parseTranformOrigin(v) {
-    var parser = new StringParser((v || '').trim()); // check for absolute values
+    var parser = new StringParser((v || '').trim()); // check for 2 absolute values
 
     var matchedAbsolute = parser.match(/^\d*\s\d*$/, true);
 
@@ -23713,7 +23716,7 @@ var SVGtoPDF = function SVGtoPDF(doc, svg, x, y, options) {
       return function (x, y) {
         return [parseInt(matches[0]), parseInt(matches[1])];
       };
-    } // check for percentage values
+    } // check for 2 percentage values
 
 
     var matchedPercents = parser.match(/^\d*% \d*%$/, true);
@@ -23725,6 +23728,8 @@ var SVGtoPDF = function SVGtoPDF(doc, svg, x, y, options) {
         return [x * (parseInt(_matches[0].slice(0, -1)) / 100), y * (parseInt(_matches[1].slice(0, -1)) / 100)];
       };
     }
+
+    console.error("\nparseTranformOrigin failed for \"" + v + "\".\nThis implementation of SVG is incomplete and can only accept 2 absolute value or 2 percentage values.\n");
   }
 
   function parseTranform(v) {
@@ -23981,7 +23986,6 @@ var SVGtoPDF = function SVGtoPDF(doc, svg, x, y, options) {
     }
 
     var _loop = function _loop(_i3) {
-      // if (!elem.classList.contains(selector.classes[i])) {return false;}
       if (!elem.classList.some(function (klass) {
         return klass === selector.classes[_i3];
       })) {
@@ -25426,7 +25430,6 @@ var SVGtoPDF = function SVGtoPDF(doc, svg, x, y, options) {
   };
 
   var SvgElemSvg = function SvgElemSvg(obj, inherits) {
-    console.log('SvgElemSvg');
     SvgElemContainer.call(this, obj, inherits);
     var width = this.getLength('width', this.getParentVWidth(), this.getParentVWidth()),
         height = this.getLength('height', this.getParentVHeight(), this.getParentVHeight()),
@@ -25473,7 +25476,6 @@ var SVGtoPDF = function SVGtoPDF(doc, svg, x, y, options) {
           transformOriginX = _this$get3[0],
           transformOriginY = _this$get3[1];
 
-      console.log(this.getVWidth(), this.getVHeight());
       return multiplyMatrix([1, 0, 0, 1, transformOriginX, transformOriginY], this.get('transform'), [1, 0, 0, 1, -transformOriginX, -transformOriginY], [1, 0, 0, 1, x, y], parseAspectRatio(aspectRatio, width, height, viewBox[2], viewBox[3]), [1, 0, 0, 1, -viewBox[0], -viewBox[1]]);
     };
   };
@@ -56019,7 +56021,7 @@ function simpleEnd(buf) {
 
 /***/ }),
 
-/***/ 2203:
+/***/ 5754:
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(a,b){if(true)!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (b),
@@ -73163,7 +73165,7 @@ module.exports = URLBrowserResolver;
 var isFunction = __webpack_require__(6225).isFunction;
 var isUndefined = __webpack_require__(6225).isUndefined;
 var isNull = __webpack_require__(6225).isNull;
-var FileSaver = __webpack_require__(2203);
+var FileSaver = __webpack_require__(5754);
 var saveAs = FileSaver.saveAs;
 
 var defaultClientFonts = {
@@ -76765,7 +76767,7 @@ function _interopDefault(ex) {
 	return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex;
 }
 
-var PdfKit = _interopDefault(__webpack_require__(1555));
+var PdfKit = _interopDefault(__webpack_require__(9486));
 
 function getEngineInstance() {
 	return PdfKit;
