@@ -1593,6 +1593,7 @@ var SVGtoPDF = function(doc, svg, x, y, options) {
     };
 
     var SvgElemSvg = function(obj, inherits) {
+      console.log('SvgElemSvg');
       SvgElemContainer.call(this, obj, inherits);
       let width = this.getLength('width', this.getParentVWidth(), this.getParentVWidth()),
           height = this.getLength('height', this.getParentVHeight(), this.getParentVHeight()),
@@ -1633,6 +1634,8 @@ var SVGtoPDF = function(doc, svg, x, y, options) {
           this.getVWidth(),
           this.getVHeight()
         );
+
+        console.log(this.getVWidth(), this.getVHeight());
 
         return multiplyMatrix(
           [1, 0, 0, 1, transformOriginX, transformOriginY],
