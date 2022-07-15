@@ -120,6 +120,7 @@ ElementWriter.prototype.addSVG = function (image, index) {
 };
 
 ElementWriter.prototype.addQr = function (qr, index) {
+
 	var context = this.context;
 	var page = context.getCurrentPage(),
 		position = this.getCurrentPositionOnPage();
@@ -136,13 +137,6 @@ ElementWriter.prototype.addQr = function (qr, index) {
 	qr.y = context.y;
 
 	this.alignImage(qr);
-
-	for (var i = 0, l = qr._canvas.length; i < l; i++) {
-		var vector = qr._canvas[i];
-		vector.x += qr.x;
-		vector.y += qr.y;
-		this.addVector(vector, true, true, index);
-	}
 
 	context.moveDown(qr._height);
 

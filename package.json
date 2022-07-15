@@ -10,7 +10,12 @@
   "dependencies": {
     "@foliojs-fork/linebreak": "^1.1.1",
     "@foliojs-fork/pdfkit": "^0.13.0",
+    "@videsk/window-node-polyfill": "1.2.0",
     "iconv-lite": "^0.6.3",
+    "jsdom": "^20.0.0",
+    "node-self": "^1.0.0-d",
+    "path": "^0.12.7",
+    "qr-code-styling": "1.6.0-rc.1",
     "xmldoc": "^1.1.2"
   },
   "devDependencies": {
@@ -55,7 +60,7 @@
     "build:vfs": "node build-vfs.js \"./examples/fonts\"",
     "build:examples": "node build-examples.js",
     "lint": "eslint \"./src/**/*.js\" \"./tests/**/*.js\" \"./examples/**/*.js\"",
-    "mocha": "mocha --reporter spec \"./tests/**/*.js\"",
+    "mocha": "node ./mocha.js",
     "playground": "node dev-playground/server.js"
   },
   "repository": {

@@ -4,6 +4,17 @@ var assert = require('assert');
 
 var integrationTestHelper = require('./integrationTestHelper');
 var SVGMeasure = require('../../src/svgMeasure');
+var PdfPrinter = require('../src/printer');
+var fonts = {
+	Roboto: {
+		normal: 'fonts/Roboto-Regular.ttf',
+		bold: 'fonts/Roboto-Medium.ttf',
+		italics: 'fonts/Roboto-Italic.ttf',
+		bolditalics: 'fonts/Roboto-MediumItalic.ttf'
+	}
+};
+var printer = new PdfPrinter(fonts);
+var fs = require('fs');
 
 // NOTE: more tests for SVGMeasure in ../svgMeasure.js
 
@@ -206,6 +217,27 @@ describe('Integration Test: svg\'s', function () {
 
 			var types = pages[0].items.map(item => item.type);
 			assert.ok(types.includes('svg'));
+		});
+
+		it('writes svg to a pdf file', function () {
+			var dd = {
+				content: [
+					{
+						table: {
+							body: [[{ svg: '<svg width="200" height="100" viewBox="0 0 600 300"></svg>' }]]
+						}
+					}
+				],
+			};
+
+			var pages = testHelper.renderPages('A6', dd);
+
+			var pdfDoc = printer.createPdfKitDocument(docDefinition);
+			pdfDoc.pipe(fs.createWriteStream('pdfs/svgs.pdf'));
+			pdfDoc.end();
+
+			// var types = pages[0].items.map(item => item.type);
+			// assert.ok(types.includes('svg'));
 		});
 	});
 });
