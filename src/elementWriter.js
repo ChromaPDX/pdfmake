@@ -116,7 +116,7 @@ ElementWriter.prototype.addImage = function (image, index, type) {
 };
 
 ElementWriter.prototype.addSVG = function (image, index) {
-	return this.addImage(image, index, 'svg')
+	return this.addImage(image, index, 'svg');
 };
 
 ElementWriter.prototype.addQr = function (qr, index) {
@@ -150,33 +150,34 @@ ElementWriter.prototype.addQr = function (qr, index) {
 };
 
 ElementWriter.prototype.addQrV2 = function (qr, index) {
-	var context = this.context;
-	var page = context.getCurrentPage(),
-		position = this.getCurrentPositionOnPage();
+	return this.addImage(qr, index, 'svg');
+	// var context = this.context;
+	// var page = context.getCurrentPage(),
+	// 	position = this.getCurrentPositionOnPage();
 
-	if (!page || (qr.absolutePosition === undefined && context.availableHeight < qr._height)) {
-		return false;
-	}
+	// if (!page || (qr.absolutePosition === undefined && context.availableHeight < qr._height)) {
+	// 	return false;
+	// }
 
-	if (qr._x === undefined) {
-		qr._x = qr.x || 0;
-	}
+	// if (qr._x === undefined) {
+	// 	qr._x = qr.x || 0;
+	// }
 
-	qr.x = context.x + qr._x;
-	qr.y = context.y;
+	// qr.x = context.x + qr._x;
+	// qr.y = context.y;
 
-	this.alignImage(qr);
+	// this.alignImage(qr);
 
-	for (var i = 0, l = qr._canvas.length; i < l; i++) {
-		var vector = qr._canvas[i];
-		vector.x += qr.x;
-		vector.y += qr.y;
-		this.addVector(vector, true, true, index);
-	}
+	// for (var i = 0, l = qr._canvas.length; i < l; i++) {
+	// 	var vector = qr._canvas[i];
+	// 	vector.x += qr.x;
+	// 	vector.y += qr.y;
+	// 	this.addVector(vector, true, true, index);
+	// }
 
-	context.moveDown(qr._height);
+	// context.moveDown(qr._height);
 
-	return position;
+	// return position;
 };
 
 ElementWriter.prototype.alignImage = function (image) {
