@@ -56,6 +56,8 @@ DocPreprocessor.prototype.preprocessNode = function (node) {
 		return this.preprocessCanvas(node);
 	} else if (node.qr) {
 		return this.preprocessQr(node);
+	} else if (node.qrV2) {
+		return this.preprocessQr(node);
 	} else if (node.pageReference || node.textReference) {
 		return this.preprocessText(node);
 	} else {

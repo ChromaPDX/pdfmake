@@ -149,6 +149,36 @@ ElementWriter.prototype.addQr = function (qr, index) {
 	return position;
 };
 
+ElementWriter.prototype.addQrV2 = function (qr, index) {
+	var context = this.context;
+	var page = context.getCurrentPage(),
+		position = this.getCurrentPositionOnPage();
+
+	if (!page || (qr.absolutePosition === undefined && context.availableHeight < qr._height)) {
+		return false;
+	}
+
+	if (qr._x === undefined) {
+		qr._x = qr.x || 0;
+	}
+
+	qr.x = context.x + qr._x;
+	qr.y = context.y;
+
+	this.alignImage(qr);
+
+	for (var i = 0, l = qr._canvas.length; i < l; i++) {
+		var vector = qr._canvas[i];
+		vector.x += qr.x;
+		vector.y += qr.y;
+		this.addVector(vector, true, true, index);
+	}
+
+	context.moveDown(qr._height);
+
+	return position;
+};
+
 ElementWriter.prototype.alignImage = function (image) {
 	var width = this.context.availableWidth;
 	var imageWidth = image._minWidth;
