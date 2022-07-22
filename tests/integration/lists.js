@@ -4,7 +4,7 @@ var assert = require('assert');
 
 var integrationTestHelper = require('./integrationTestHelper');
 
-describe('Integration test: lists', function () {
+describe('Integration test: lists', async function () {
 
 	var testHelper = new integrationTestHelper();
 
@@ -20,7 +20,7 @@ describe('Integration test: lists', function () {
 		};
 	}
 
-	it('renders a ordered list', function () {
+	it('renders a ordered list', async function () {
 		var dd = {
 			content: {
 				ol: [
@@ -31,7 +31,7 @@ describe('Integration test: lists', function () {
 			}
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -70,7 +70,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item4.content.y, testHelper.MARGINS.top + testHelper.LINE_HEIGHT * 3);
 	});
 
-	it('renders a ordered list and adapts margin to longest list number', function () {
+	it('renders a ordered list and adapts margin to longest list number', async function () {
 		var dd = {
 			content: {
 				ol: [
@@ -88,7 +88,7 @@ describe('Integration test: lists', function () {
 			}
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -107,7 +107,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item10.content.x, testHelper.MARGINS.left + testHelper.getWidthOfString('10. '));
 	});
 
-	it('renders a unordered list', function () {
+	it('renders a unordered list', async function () {
 		var dd = {
 			content: {
 				ul: [
@@ -118,7 +118,7 @@ describe('Integration test: lists', function () {
 			}
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -156,7 +156,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item4.content.y, testHelper.MARGINS.top + testHelper.LINE_HEIGHT * 3);
 	});
 
-	it('renders a unordered list and keeps constant small margin', function () {
+	it('renders a unordered list and keeps constant small margin', async function () {
 		var dd = {
 			content: {
 				ul: [
@@ -174,7 +174,7 @@ describe('Integration test: lists', function () {
 			}
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -194,7 +194,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item10.content.x, testHelper.MARGINS.left + testHelper.getWidthOfString(testHelper.DEFAULT_BULLET_SPACER));
 	});
 
-	it('renders nested lists', function () {
+	it('renders nested lists', async function () {
 		var dd = {
 			content: {
 				ol: [
@@ -208,7 +208,7 @@ describe('Integration test: lists', function () {
 			}
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -252,7 +252,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item3.content.y, testHelper.MARGINS.top + testHelper.LINE_HEIGHT * 4);
 	});
 
-	it('renders a ordered list with start value', function () {
+	it('renders a ordered list with start value', async function () {
 		var dd = {
 			content: [
 				{
@@ -268,7 +268,7 @@ describe('Integration test: lists', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -281,7 +281,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item5.bullet.inlines.map(inline => inline.text).join(''), '54. ');
 	});
 
-	it('renders a ordered list with start value zero', function () {
+	it('renders a ordered list with start value zero', async function () {
 		var dd = {
 			content: [
 				{
@@ -297,7 +297,7 @@ describe('Integration test: lists', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -310,7 +310,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item5.bullet.inlines.map(inline => inline.text).join(''), '4. ');
 	});
 
-	it('renders a ordered list with counter values', function () {
+	it('renders a ordered list with counter values', async function () {
 		var dd = {
 			content: [
 				{
@@ -325,7 +325,7 @@ describe('Integration test: lists', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -342,7 +342,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item5.bullet.inlines.map(inline => inline.text).join(''), '5. ');
 	});
 
-	it('renders a reversed ordered list', function () {
+	it('renders a reversed ordered list', async function () {
 		var dd = {
 			content: [
 				{
@@ -358,7 +358,7 @@ describe('Integration test: lists', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -371,7 +371,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item5.bullet.inlines.map(inline => inline.text).join(''), '1. ');
 	});
 
-	it('renders a ordered list with own separator', function () {
+	it('renders a ordered list with own separator', async function () {
 		var dd = {
 			content: [
 				{
@@ -387,7 +387,7 @@ describe('Integration test: lists', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -400,7 +400,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item5.bullet.inlines.map(inline => inline.text).join(''), '5) ');
 	});
 
-	it('renders a ordered list with own complex separator', function () {
+	it('renders a ordered list with own complex separator', async function () {
 		var dd = {
 			content: [
 				{
@@ -416,7 +416,7 @@ describe('Integration test: lists', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -429,7 +429,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item5.bullet.inlines.map(inline => inline.text).join(''), '(5) ');
 	});
 
-	it('renders a ordered list with upper-roman style type', function () {
+	it('renders a ordered list with upper-roman style type', async function () {
 		var dd = {
 			content: [
 				{
@@ -445,7 +445,7 @@ describe('Integration test: lists', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -470,7 +470,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item5.bullet.inlines.map(inline => inline.text).join(''), 'V. ');
 	});
 
-	it('renders a ordered list with lower-roman style type', function () {
+	it('renders a ordered list with lower-roman style type', async function () {
 		var dd = {
 			content: [
 				{
@@ -486,7 +486,7 @@ describe('Integration test: lists', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -511,7 +511,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item5.bullet.inlines.map(inline => inline.text).join(''), 'v. ');
 	});
 
-	it('renders a ordered list with upper-roman style type and check maximum', function () {
+	it('renders a ordered list with upper-roman style type and check maximum', async function () {
 		var dd = {
 			content: [
 				{
@@ -530,7 +530,7 @@ describe('Integration test: lists', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -563,7 +563,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item7.bullet.inlines.map(inline => inline.text).join(''), '5001. ');
 	});
 
-	it('renders a ordered list with upper-roman style type and check minimum', function () {
+	it('renders a ordered list with upper-roman style type and check minimum', async function () {
 		var dd = {
 			content: [
 				{
@@ -580,7 +580,7 @@ describe('Integration test: lists', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -605,7 +605,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item5.bullet.inlines.map(inline => inline.text).join(''), 'II. ');
 	});
 
-	it('renders a ordered list with upper-alpha style type', function () {
+	it('renders a ordered list with upper-alpha style type', async function () {
 		var dd = {
 			content: [
 				{
@@ -621,7 +621,7 @@ describe('Integration test: lists', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -646,7 +646,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item5.bullet.inlines.map(inline => inline.text).join(''), 'E. ');
 	});
 
-	it('renders a ordered list with upper-alpha style type (counter 25 - 29)', function () {
+	it('renders a ordered list with upper-alpha style type (counter 25 - 29)', async function () {
 		var dd = {
 			content: [
 				{
@@ -663,7 +663,7 @@ describe('Integration test: lists', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -688,7 +688,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item5.bullet.inlines.map(inline => inline.text).join(''), 'AC. ');
 	});
 
-	it('renders a ordered list with upper-alpha style type and check minimum', function () {
+	it('renders a ordered list with upper-alpha style type and check minimum', async function () {
 		var dd = {
 			content: [
 				{
@@ -705,7 +705,7 @@ describe('Integration test: lists', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -730,7 +730,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item5.bullet.inlines.map(inline => inline.text).join(''), 'B. ');
 	});
 
-	it('renders a ordered list with lower-alpha style type', function () {
+	it('renders a ordered list with lower-alpha style type', async function () {
 		var dd = {
 			content: [
 				{
@@ -746,7 +746,7 @@ describe('Integration test: lists', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -771,7 +771,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item5.bullet.inlines.map(inline => inline.text).join(''), 'e. ');
 	});
 
-	it('renders a ordered list with lower-alpha style type (counter 25 - 29)', function () {
+	it('renders a ordered list with lower-alpha style type (counter 25 - 29)', async function () {
 		var dd = {
 			content: [
 				{
@@ -788,7 +788,7 @@ describe('Integration test: lists', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -813,7 +813,7 @@ describe('Integration test: lists', function () {
 		assert.equal(item5.bullet.inlines.map(inline => inline.text).join(''), 'ac. ');
 	});
 
-	it('renders a ordered list with lower-alpha style type and check minimum', function () {
+	it('renders a ordered list with lower-alpha style type and check minimum', async function () {
 		var dd = {
 			content: [
 				{
@@ -830,7 +830,7 @@ describe('Integration test: lists', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 

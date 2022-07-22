@@ -52,6 +52,13 @@ PageElementWriter.prototype.addQr = function (qr, index) {
 	});
 };
 
+PageElementWriter.prototype.addQrV2 = function (qr, index) {
+	return fitOnPage(this, function (self) {
+		return self.writer.addQrV2(qr, index);
+	});
+};
+
+
 PageElementWriter.prototype.addVector = function (vector, ignoreContextX, ignoreContextY, index) {
 	return this.writer.addVector(vector, ignoreContextX, ignoreContextY, index);
 };

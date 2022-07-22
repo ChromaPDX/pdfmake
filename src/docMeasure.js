@@ -13,6 +13,7 @@ var fontStringify = require('./helpers').fontStringify;
 var getNodeId = require('./helpers').getNodeId;
 var pack = require('./helpers').pack;
 var qrEncoder = require('./qrEnc.js');
+var qrEncoderV2 = require('./qrEncV2.js');
 
 /**
  * @private
@@ -67,6 +68,8 @@ DocMeasure.prototype.measureNode = function (node) {
 			return extendMargins(self.measureCanvas(node));
 		} else if (node.qr) {
 			return extendMargins(self.measureQr(node));
+		} else if (node.qrV2) {
+			return extendMargins(self.measureQrV2(node));
 		} else {
 			throw 'Unrecognized document structure: ' + JSON.stringify(node, fontStringify);
 		}
@@ -800,6 +803,12 @@ DocMeasure.prototype.measureCanvas = function (node) {
 
 DocMeasure.prototype.measureQr = function (node) {
 	node = qrEncoder.measure(node);
+	node._alignment = this.styleStack.getProperty('alignment');
+	return node;
+};
+
+DocMeasure.prototype.measureQrV2 = async function (node) {
+	node = await qrEncoderV2.measure(node, this.images);
 	node._alignment = this.styleStack.getProperty('alignment');
 	return node;
 };

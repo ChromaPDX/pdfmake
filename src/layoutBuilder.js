@@ -57,7 +57,8 @@ LayoutBuilder.prototype.registerTableLayouts = function (tableLayouts) {
  * @param {Object} defaultStyle default style definition
  * @return {Array} an array of pages
  */
-LayoutBuilder.prototype.layoutDocument = function (docStructure, fontProvider, styleDictionary, defaultStyle, background, header, footer, images, watermark, pageBreakBeforeFct) {
+LayoutBuilder.prototype.layoutDocument = async function (docStructure, fontProvider, styleDictionary, defaultStyle, background, header, footer, images, watermark, pageBreakBeforeFct) {
+
 
 	function addPageBreaksIfNecessary(linearNodeList, pages) {
 
@@ -133,16 +134,44 @@ LayoutBuilder.prototype.layoutDocument = function (docStructure, fontProvider, s
 		});
 	}
 
-	var result = this.tryLayoutDocument(docStructure, fontProvider, styleDictionary, defaultStyle, background, header, footer, images, watermark);
+	var result = await this.tryLayoutDocument(docStructure, fontProvider, styleDictionary, defaultStyle, background, header, footer, images, watermark);
 	while (addPageBreaksIfNecessary(result.linearNodeList, result.pages)) {
 		resetXYs(result);
-		result = this.tryLayoutDocument(docStructure, fontProvider, styleDictionary, defaultStyle, background, header, footer, images, watermark);
+		result = await this.tryLayoutDocument(docStructure, fontProvider, styleDictionary, defaultStyle, background, header, footer, images, watermark);
 	}
 
 	return result.pages;
 };
 
-LayoutBuilder.prototype.tryLayoutDocument = function (docStructure, fontProvider, styleDictionary, defaultStyle, background, header, footer, images, watermark, pageBreakBeforeFct) {
+// https://alphahydrae.com/2021/02/a-javascript-function-that-recursively-resolves-promises/
+async function resolver(value) {
+	// Await the value in case it's a promise.
+	const resolved = await value;
+
+	if (isPlainObject(resolved)) {
+		const entries = Object.entries(resolved);
+		const resolvedEntries = entries.map(
+			// Recursively resolve object values.
+			async ([key, value]) => [key, await resolver(value)]
+		);
+		return Object.fromEntries(
+			await Promise.all(resolvedEntries)
+		);
+	} else if (Array.isArray(resolved)) {
+		// Recursively resolve array values.
+		return Promise.all(resolved.map(resolver));
+	}
+
+	return resolved;
+}
+
+function isPlainObject(value) {
+	return typeof value === 'object' &&
+		value !== null &&
+		value.constructor === Object;
+}
+
+LayoutBuilder.prototype.tryLayoutDocument = async function (docStructure, fontProvider, styleDictionary, defaultStyle, background, header, footer, images, watermark, pageBreakBeforeFct) {
 
 	this.linearNodeList = [];
 	docStructure = this.docPreprocessor.preprocessDocument(docStructure);
@@ -157,6 +186,8 @@ LayoutBuilder.prototype.tryLayoutDocument = function (docStructure, fontProvider
 	});
 
 	this.addBackground(background);
+	docStructure = await resolver(docStructure)
+
 	this.processNode(docStructure);
 	this.addHeadersAndFooters(header, footer);
 	if (watermark != null) {
@@ -411,6 +442,8 @@ LayoutBuilder.prototype.processNode = function (node) {
 			self.processCanvas(node);
 		} else if (node.qr) {
 			self.processQr(node);
+		} else if (node.qrV2) {
+			self.processQrV2(node);
 		} else if (!node._span) {
 			throw 'Unrecognized document structure: ' + JSON.stringify(node, fontStringify);
 		}
@@ -803,5 +836,11 @@ LayoutBuilder.prototype.processQr = function (node) {
 	var position = this.writer.addQr(node);
 	node.positions.push(position);
 };
+
+LayoutBuilder.prototype.processQrV2 = function (node) {
+	var position = this.writer.addQrV2(node);
+	node.positions.push(position);
+};
+
 
 module.exports = LayoutBuilder;

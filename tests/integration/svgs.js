@@ -7,14 +7,14 @@ var SVGMeasure = require('../../src/svgMeasure');
 
 // NOTE: more tests for SVGMeasure in ../svgMeasure.js
 
-describe('Integration Test: svg\'s', function () {
+describe('Integration Test: svg\'s', async function () {
 
 	var testHelper = new integrationTestHelper();
 
 	var INLINE_TEST_SVG = '<svg viewBox="0 0 500 500"><circle cx="250" cy="250" r="100" stroke="black" stroke-width="3" fill="red" /></svg>';
 
-	describe('basics', function () {
-		it('renders next element below svg', function () {
+	describe('basics', async function () {
+		it('renders next element below svg', async function () {
 			var svgHeight = 150;
 			var dd = {
 				content: [
@@ -26,7 +26,7 @@ describe('Integration Test: svg\'s', function () {
 				]
 			};
 
-			var pages = testHelper.renderPages('A6', dd);
+			var pages = await testHelper.renderPages('A6', dd);
 
 			assert.equal(pages.length, 1);
 
@@ -39,7 +39,7 @@ describe('Integration Test: svg\'s', function () {
 			assert.equal(someElementAfterSvg.y, testHelper.MARGINS.top + svgHeight);
 		});
 
-		it('renders svg below text', function () {
+		it('renders svg below text', async function () {
 			var svgHeight = 150;
 			var dd = {
 				content: [
@@ -51,7 +51,7 @@ describe('Integration Test: svg\'s', function () {
 				]
 			};
 
-			var pages = testHelper.renderPages('A6', dd);
+			var pages = await testHelper.renderPages('A6', dd);
 
 			assert.equal(pages.length, 1);
 
@@ -67,11 +67,11 @@ describe('Integration Test: svg\'s', function () {
 		});
 	});
 
-	describe('dimensions', function () {
+	describe('dimensions', async function () {
 
 		var svgMeasure = new SVGMeasure();
 
-		it('reads height and width from svg', function () {
+		it('reads height and width from svg', async function () {
 			var dd = {
 				content: [
 					{
@@ -80,7 +80,7 @@ describe('Integration Test: svg\'s', function () {
 				]
 			};
 
-			var pages = testHelper.renderPages('A6', dd);
+			var pages = await testHelper.renderPages('A6', dd);
 
 			var svgNode = pages[0].items[0].item;
 
@@ -88,7 +88,7 @@ describe('Integration Test: svg\'s', function () {
 			assert.equal(svgNode._height, 100);
 		});
 
-		it('reads height and width from svg (decimals)', function () {
+		it('reads height and width from svg (decimals)', async function () {
 			var dd = {
 				content: [
 					{
@@ -97,7 +97,7 @@ describe('Integration Test: svg\'s', function () {
 				]
 			};
 
-			var pages = testHelper.renderPages('A6', dd);
+			var pages = await testHelper.renderPages('A6', dd);
 
 			var svgNode = pages[0].items[0].item;
 
@@ -105,7 +105,7 @@ describe('Integration Test: svg\'s', function () {
 			assert.equal(Number(svgNode._height).toFixed(2), 100.35);
 		});
 
-		it('reads height and width from viewBox', function () {
+		it('reads height and width from viewBox', async function () {
 			var dd = {
 				content: [
 					{
@@ -114,7 +114,7 @@ describe('Integration Test: svg\'s', function () {
 				]
 			};
 
-			var pages = testHelper.renderPages('A6', dd);
+			var pages = await testHelper.renderPages('A6', dd);
 
 			var svgNode = pages[0].items[0].item;
 
@@ -122,7 +122,7 @@ describe('Integration Test: svg\'s', function () {
 			assert.equal(svgNode._height, 300);
 		});
 
-		it('reads height and width from viewBox (decimals)', function () {
+		it('reads height and width from viewBox (decimals)', async function () {
 			var dd = {
 				content: [
 					{
@@ -131,7 +131,7 @@ describe('Integration Test: svg\'s', function () {
 				]
 			};
 
-			var pages = testHelper.renderPages('A6', dd);
+			var pages = await testHelper.renderPages('A6', dd);
 
 			var svgNode = pages[0].items[0].item;
 
@@ -139,7 +139,7 @@ describe('Integration Test: svg\'s', function () {
 			assert.equal(Number(svgNode._height).toFixed(2), 300.20);
 		});
 
-		it('writes width and height from definition to svg', function () {
+		it('writes width and height from definition to svg', async function () {
 			var dd = {
 				content: [
 					{
@@ -150,7 +150,7 @@ describe('Integration Test: svg\'s', function () {
 				]
 			};
 
-			var pages = testHelper.renderPages('A6', dd);
+			var pages = await testHelper.renderPages('A6', dd);
 
 			var svgNode = pages[0].items[0].item;
 			var svgDimensions = svgMeasure.measureSVG(svgNode.svg);
@@ -159,7 +159,7 @@ describe('Integration Test: svg\'s', function () {
 			assert.equal(svgDimensions.height, 800);
 		});
 
-		it('writes width and height from definition to svg (decimals)', function () {
+		it('writes width and height from definition to svg (decimals)', async function () {
 			var dd = {
 				content: [
 					{
@@ -170,7 +170,7 @@ describe('Integration Test: svg\'s', function () {
 				]
 			};
 
-			var pages = testHelper.renderPages('A6', dd);
+			var pages = await testHelper.renderPages('A6', dd);
 
 			var svgNode = pages[0].items[0].item;
 			var svgDimensions = svgMeasure.measureSVG(svgNode.svg);
@@ -179,7 +179,7 @@ describe('Integration Test: svg\'s', function () {
 			assert.equal(svgDimensions.height, 800.35);
 		});
 
-		it('writes svg in header', function () {
+		it('writes svg in header', async function () {
 			var dd = {
 				content: [],
 				header: {
@@ -187,11 +187,11 @@ describe('Integration Test: svg\'s', function () {
 				}
 			};
 
-			var pages = testHelper.renderPages('A6', dd);
+			var pages = await testHelper.renderPages('A6', dd);
 			assert.equal(pages[0].items[0].type, 'svg');
 		});
 
-		it('writes svg in table', function () {
+		it('writes svg in table', async function () {
 			var dd = {
 				content: [
 					{
@@ -202,7 +202,7 @@ describe('Integration Test: svg\'s', function () {
 				],
 			};
 
-			var pages = testHelper.renderPages('A6', dd);
+			var pages = await testHelper.renderPages('A6', dd);
 
 			var types = pages[0].items.map(item => item.type);
 			assert.ok(types.includes('svg'));

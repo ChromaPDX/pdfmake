@@ -4,11 +4,11 @@ var assert = require('assert');
 
 var integrationTestHelper = require('./integrationTestHelper');
 
-describe('Integration test: background', function () {
+describe('Integration test: background', async function () {
 
 	var testHelper = new integrationTestHelper();
 
-	it('renders on every page', function () {
+	it('renders on every page', async function () {
 		var dd = {
 			background: function (page) {
 				return [
@@ -22,7 +22,7 @@ describe('Integration test: background', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 2);
 
@@ -37,7 +37,7 @@ describe('Integration test: background', function () {
 		assert.equal(backgroundPage2.y, 0);
 	});
 
-	it('table fillColor must be above background', function () {
+	it('table fillColor must be above background', async function () {
 		var dd = {
 			background: function () {
 				return [
@@ -60,7 +60,7 @@ describe('Integration test: background', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -82,7 +82,7 @@ describe('Integration test: background', function () {
 	 * - Images
 	 * - Leafs
 	 */
-	it('background elements remain at the bottom of item list on every page', function () {
+	it('background elements remain at the bottom of item list on every page', async function () {
 		var dd = {
 			background: function () {
 				return [
@@ -178,7 +178,7 @@ describe('Integration test: background', function () {
 				}
 			]
 		};
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 		assert.equal(pages.length, 2);
 		var first = pages[0].items[0].item;
 		var second = pages[0].items[1].item;

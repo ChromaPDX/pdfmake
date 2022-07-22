@@ -4,11 +4,11 @@ var assert = require('assert');
 var sizes = require('../../src/standardPageSizes');
 var integrationTestHelper = require('./integrationTestHelper');
 
-describe('Integration test: alignment', function () {
+describe('Integration test: alignment', async function () {
 
 	var testHelper = new integrationTestHelper();
 
-	it('renders text right aligned', function () {
+	it('renders text right aligned', async function () {
 
 		var dd = {
 			content: [
@@ -27,7 +27,7 @@ describe('Integration test: alignment', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -44,7 +44,7 @@ describe('Integration test: alignment', function () {
 		assert.equal(itemLeftAfter.y, testHelper.MARGINS.top + testHelper.LINE_HEIGHT * 2);
 	});
 
-	it('renders text center aligned', function () {
+	it('renders text center aligned', async function () {
 
 		var dd = {
 			content: [
@@ -63,7 +63,7 @@ describe('Integration test: alignment', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 
@@ -80,7 +80,7 @@ describe('Integration test: alignment', function () {
 		assert.equal(itemLeftAfter.y, testHelper.MARGINS.top + testHelper.LINE_HEIGHT * 2);
 	});
 
-	it('renders text justify aligned', function () {
+	it('renders text justify aligned', async function () {
 
 		var dd = {
 			content: [
@@ -99,7 +99,7 @@ describe('Integration test: alignment', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.equal(pages.length, 1);
 

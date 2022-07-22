@@ -13,7 +13,7 @@ function IntegrationTestHelper() {
 	this.DEFAULT_BULLET_SPACER = '9. ';
 }
 
-IntegrationTestHelper.prototype.renderPages = function (sizeName, docDefinition) {
+IntegrationTestHelper.prototype.renderPages = async function (sizeName, docDefinition) {
 	var size = sizes[sizeName];
 	docDefinition.images = docDefinition.images || {};
 	var fontDescriptors = {
@@ -36,7 +36,7 @@ IntegrationTestHelper.prototype.renderPages = function (sizeName, docDefinition)
 	);
 	this.fontProvider = new FontProvider(fontDescriptors, pdfKitDoc);
 
-	return builder.layoutDocument(
+	return await builder.layoutDocument(
 		docDefinition.content,
 		this.fontProvider, docDefinition.styles || {},
 		docDefinition.defaultStyle || { fontSize: 12, font: 'Roboto' },
