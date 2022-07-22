@@ -26,7 +26,7 @@ describe('Integration test: tables', function () {
 	var startX = testHelper.MARGINS.left + TABLE_PADDING_X + TABLE_BORDER_STRENGTH;
 	var startY = testHelper.MARGINS.top + TABLE_PADDING_Y + TABLE_BORDER_STRENGTH;
 
-	it('renders a simple table', function () {
+	it('renders a simple table', async function () {
 		var dd = {
 			content: {
 				table: {
@@ -38,7 +38,7 @@ describe('Integration test: tables', function () {
 			}
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 		var lines = getCells(pages, { pageNumber: 0 });
 
 		assert.equal(pages.length, 1);
@@ -62,7 +62,7 @@ describe('Integration test: tables', function () {
 		assert.deepEqual(getColumnText(lines, { cell: 3 }), 'Value 2');
 	});
 
-	it('renders a table with nested list', function () {
+	it('renders a table with nested list', async function () {
 		var dd = {
 			content: {
 				table: {
@@ -76,7 +76,7 @@ describe('Integration test: tables', function () {
 			}
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 		var lines = getCells(pages, { pageNumber: 0 });
 
 		assert.equal(pages.length, 1);
@@ -101,7 +101,7 @@ describe('Integration test: tables', function () {
 		assert.deepEqual(getColumnText(lines, { cell: 2 }), 'item 2');
 	});
 
-	it('renders a table with nested table', function () {
+	it('renders a table with nested table', async function () {
 		var dd = {
 			content: {
 				table: {
@@ -122,7 +122,7 @@ describe('Integration test: tables', function () {
 			}
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 		var lines = getCells(pages, { pageNumber: 0 });
 
 		assert.equal(pages.length, 1);
@@ -162,7 +162,7 @@ describe('Integration test: tables', function () {
 		assert.deepEqual(getColumnText(lines, { cell: 4 }), 'Some Value');
 	});
 
-	it('renders a simple table with star width', function () {
+	it('renders a simple table with star width', async function () {
 		var definedWidth = 25;
 		var dd = {
 			content: {
@@ -175,7 +175,7 @@ describe('Integration test: tables', function () {
 			}
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 		var lines = getCells(pages, { pageNumber: 0 });
 
 		assert.equal(pages.length, 1);
@@ -200,7 +200,7 @@ describe('Integration test: tables', function () {
 		assert.equal(lines[1].item.maxWidth, starWidth);
 	});
 
-	it('renders a simple table with auto width', function () {
+	it('renders a simple table with auto width', async function () {
 		var definedWidth = 25;
 		var dd = {
 			content: {
@@ -213,7 +213,7 @@ describe('Integration test: tables', function () {
 			}
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 		var lines = getCells(pages, { pageNumber: 0 });
 
 		assert.equal(pages.length, 1);
@@ -238,7 +238,7 @@ describe('Integration test: tables', function () {
 		assert.equal(lines[1].item.maxWidth, autoWidth);
 	});
 
-	it('renders a simple table with colspan', function () {
+	it('renders a simple table with colspan', async function () {
 		var dd = {
 			content: {
 				table: {
@@ -249,7 +249,7 @@ describe('Integration test: tables', function () {
 			}
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 		var lines = getCells(pages, { pageNumber: 0 });
 
 		assert.equal(pages.length, 1);
@@ -262,7 +262,7 @@ describe('Integration test: tables', function () {
 		assert.deepEqual(getColumnText(lines, { cell: 1 }), 'Column 2');
 	});
 
-	it('renders a simple table with rowspan', function () {
+	it('renders a simple table with rowspan', async function () {
 		var dd = {
 			content: {
 				table: {
@@ -275,7 +275,7 @@ describe('Integration test: tables', function () {
 			}
 		};
 
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 		var lines = getCells(pages, { pageNumber: 0 });
 
 		assert.equal(pages.length, 1);

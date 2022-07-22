@@ -5,12 +5,12 @@ var sizes = require('../../src/standardPageSizes');
 
 var integrationTestHelper = require('./integrationTestHelper');
 
-describe('Integration test: basics', function () {
+describe('Integration test: basics', async function () {
 
 	var testHelper = new integrationTestHelper();
 
-	it('renders text on page', function () {
-		var pages = testHelper.renderPages('A7', {
+	it('renders text on page', async function () {
+		var pages = await testHelper.renderPages('A7', {
 			content: [
 				'First paragraph',
 				'Second paragraph on three lines because it is longer'
@@ -27,7 +27,7 @@ describe('Integration test: basics', function () {
 		assert.deepEqual(testHelper.getInlineTexts(pages, { page: 0, item: 3 }), ['longer']);
 	});
 
-	it('renders text with margin', function () {
+	it('renders text with margin', async function () {
 		var customMargin = 10;
 		var anotherCustomMargin = 13;
 		var dd = {
@@ -42,7 +42,7 @@ describe('Integration test: basics', function () {
 			]
 		};
 
-		var pages = testHelper.renderPages('A5', dd);
+		var pages = await testHelper.renderPages('A5', dd);
 
 		assert.equal(pages.length, 1);
 		assert.equal(pages[0].items[0].item.x, testHelper.MARGINS.left + customMargin);

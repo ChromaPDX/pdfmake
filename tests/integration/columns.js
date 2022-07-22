@@ -5,11 +5,11 @@ var sizes = require('../../src/standardPageSizes');
 
 var integrationTestHelper = require('./integrationTestHelper');
 
-describe('Integration test: columns', function () {
+describe('Integration test: columns', async function () {
 
 	var testHelper = new integrationTestHelper();
 
-	it('renders two columns', function () {
+	it('renders two columns', async function () {
 		var dd = {
 			content: [
 				{
@@ -24,7 +24,7 @@ describe('Integration test: columns', function () {
 				columnGap: 1
 			}
 		};
-		var pages = testHelper.renderPages('A5', dd);
+		var pages = await testHelper.renderPages('A5', dd);
 
 		var columnCount = 2,
 			columnSpacing = (sizes.A5[0] + dd.defaultStyle.columnGap) / columnCount;
@@ -39,7 +39,7 @@ describe('Integration test: columns', function () {
 		assert.deepEqual(testHelper.getInlineTexts(pages, { page: 0, item: 3 }).join(''), 'profecta versatur');
 	});
 
-	it('renders three columns', function () {
+	it('renders three columns', async function () {
 		var dd = {
 			content: [
 				{
@@ -55,7 +55,7 @@ describe('Integration test: columns', function () {
 			}
 		};
 
-		var pages = testHelper.renderPages('A5', dd);
+		var pages = await testHelper.renderPages('A5', dd);
 
 		var columnCount = 3,
 			columnSpacing = (sizes.A5[0] - (testHelper.MARGINS.left + testHelper.MARGINS.right) + dd.defaultStyle.columnGap) / columnCount;
@@ -70,7 +70,7 @@ describe('Integration test: columns', function () {
 		assert.deepEqual(testHelper.getInlineTexts(pages, { page: 0, item: 2 }).join(''), 'dolor sit amet');
 	});
 
-	it('renders star column', function () {
+	it('renders star column', async function () {
 		var dd = {
 			content: [
 				{
@@ -91,7 +91,7 @@ describe('Integration test: columns', function () {
 			}
 		};
 
-		var pages = testHelper.renderPages('A5', dd);
+		var pages = await testHelper.renderPages('A5', dd);
 
 		var leftColumnSpacing = testHelper.MARGINS.left,
 			definedWidth = dd.content[0].columns[0].width,
@@ -122,7 +122,7 @@ describe('Integration test: columns', function () {
 		assert.deepEqual(testHelper.getInlineTexts(pages, { page: 0, item: 5 }).join(''), 'adipisicing elit.');
 	});
 
-	it('renders auto column', function () {
+	it('renders auto column', async function () {
 		var dd = {
 			content: [
 				{
@@ -147,7 +147,7 @@ describe('Integration test: columns', function () {
 			}
 		};
 
-		var pages = testHelper.renderPages('A5', dd);
+		var pages = await testHelper.renderPages('A5', dd);
 		var items = pages[0].items.map(node => node.item);
 
 		var definedWidth = dd.content[0].columns[2].width,
@@ -182,7 +182,7 @@ describe('Integration test: columns', function () {
 		assert.deepEqual(testHelper.getInlineTexts(pages, { page: 0, item: 4 }).join(''), 'this one');
 	});
 
-	it('renders only needed space for auto columns', function () {
+	it('renders only needed space for auto columns', async function () {
 		var dd = {
 			content: [
 				{
@@ -203,7 +203,7 @@ describe('Integration test: columns', function () {
 			}
 		};
 
-		var pages = testHelper.renderPages('A5', dd);
+		var pages = await testHelper.renderPages('A5', dd);
 		var items = pages[0].items.map(node => node.item);
 
 		var autoWidth = Math.max(...items.slice(0, 2).map(node => node.maxWidth)),
@@ -219,7 +219,7 @@ describe('Integration test: columns', function () {
 		assert.deepEqual(testHelper.getInlineTexts(pages, { page: 0, item: 1 }).join(''), 'val');
 	});
 
-	it('renders empty column lists', function () {
+	it('renders empty column lists', async function () {
 		var dd = {
 			content: [
 				{ columns: [] },
@@ -230,12 +230,12 @@ describe('Integration test: columns', function () {
 				}
 			]
 		};
-		var pages = testHelper.renderPages('A6', dd);
+		var pages = await testHelper.renderPages('A6', dd);
 
 		assert.deepEqual(pages.length, 2);
 	});
 
-	it('render nested columns', function () {
+	it('render nested columns', async function () {
 		var dd = {
 			content: [
 				{
@@ -259,7 +259,7 @@ describe('Integration test: columns', function () {
 			}
 		};
 
-		var pages = testHelper.renderPages('A5', dd);
+		var pages = await testHelper.renderPages('A5', dd);
 		var items = pages[0].items.map(node => node.item);
 
 		var gap = dd.defaultStyle.columnGap;

@@ -18,7 +18,7 @@ DocPreprocessor.prototype.preprocessDocument = function (docStructure) {
 	return this.preprocessNode(docStructure);
 };
 
-DocPreprocessor.prototype.preprocessNode = function (node) {
+DocPreprocessor.prototype.preprocessNode = function (node, order = 1) {
 	// expand shortcuts and casting values
 	if (isArray(node)) {
 		node = { stack: node };
@@ -33,6 +33,8 @@ DocPreprocessor.prototype.preprocessNode = function (node) {
 	} else if ('text' in node && (node.text === undefined || node.text === null)) {
 		node.text = '';
 	}
+
+	node.order = order;
 
 	if (node.columns) {
 		return this.preprocessColumns(node);
@@ -69,7 +71,7 @@ DocPreprocessor.prototype.preprocessColumns = function (node) {
 	var columns = node.columns;
 
 	for (var i = 0, l = columns.length; i < l; i++) {
-		columns[i] = this.preprocessNode(columns[i]);
+		columns[i] = this.preprocessNode(columns[i], i);
 	}
 
 	return node;
@@ -79,7 +81,7 @@ DocPreprocessor.prototype.preprocessVerticalContainer = function (node) {
 	var items = node.stack;
 
 	for (var i = 0, l = items.length; i < l; i++) {
-		items[i] = this.preprocessNode(items[i]);
+		items[i] = this.preprocessNode(items[i], i);
 	}
 
 	return node;
@@ -89,7 +91,7 @@ DocPreprocessor.prototype.preprocessList = function (node) {
 	var items = node.ul || node.ol;
 
 	for (var i = 0, l = items.length; i < l; i++) {
-		items[i] = this.preprocessNode(items[i]);
+		items[i] = this.preprocessNode(items[i], i);
 	}
 
 	return node;
@@ -107,7 +109,7 @@ DocPreprocessor.prototype.preprocessTable = function (node) {
 					data = '';
 				}
 				if (!data._span) {
-					rowData[col] = this.preprocessNode(data);
+					rowData[col] = this.preprocessNode(data, (col * node.table.body[0].length) + row);
 				}
 			}
 		}

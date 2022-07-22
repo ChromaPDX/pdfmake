@@ -4,14 +4,14 @@ var assert = require('assert');
 
 var integrationTestHelper = require('./integrationTestHelper');
 
-describe('Integration Test: images', function () {
+describe('Integration Test: images', async function () {
 
 	var testHelper = new integrationTestHelper();
 
 	var INLINE_TEST_IMAGE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAGAQMAAADNIO3CAAAAA1BMVEUAAN7GEcIJAAAAAWJLR0QAiAUdSAAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB98DBREbA3IZ3d8AAAALSURBVAjXY2BABwAAEgAB74lUpAAAAABJRU5ErkJggg==';
 
-	describe('basics', function () {
-		it('renders next element below image', function () {
+	describe('basics', async function () {
+		it('renders next element below image', async function () {
 			var imageHeight = 150;
 			var dd = {
 				content: [
@@ -23,7 +23,7 @@ describe('Integration Test: images', function () {
 				]
 			};
 
-			var pages = testHelper.renderPages('A6', dd);
+			var pages = await testHelper.renderPages('A6', dd);
 
 			assert.equal(pages.length, 1);
 
@@ -36,7 +36,7 @@ describe('Integration Test: images', function () {
 			assert.equal(someElementAfterImage.y, testHelper.MARGINS.top + imageHeight);
 		});
 
-		it('renders image below text', function () {
+		it('renders image below text', async function () {
 			var imageHeight = 150;
 			var dd = {
 				content: [
@@ -48,7 +48,7 @@ describe('Integration Test: images', function () {
 				]
 			};
 
-			var pages = testHelper.renderPages('A6', dd);
+			var pages = await testHelper.renderPages('A6', dd);
 
 			assert.equal(pages.length, 1);
 
