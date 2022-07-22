@@ -807,8 +807,8 @@ DocMeasure.prototype.measureQr = function (node) {
 	return node;
 };
 
-DocMeasure.prototype.measureQrV2 = function (node) {
-	node = qrEncoderV2.measure(node);
+DocMeasure.prototype.measureQrV2 = async function (node) {
+	node = await qrEncoderV2.measure(node, this.images);
 	node._alignment = this.styleStack.getProperty('alignment');
 	return node;
 };

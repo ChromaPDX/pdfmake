@@ -108,7 +108,7 @@ function PdfPrinter(fontDescriptors) {
  *
  * @return {Object} a pdfKit document object which can be saved or encode to data-url
  */
-PdfPrinter.prototype.createPdfKitDocument = function (docDefinition, options) {
+PdfPrinter.prototype.createPdfKitDocument = async function (docDefinition, options) {
 	options = options || {};
 
 	docDefinition.version = docDefinition.version || '1.3';
@@ -143,7 +143,7 @@ PdfPrinter.prototype.createPdfKitDocument = function (docDefinition, options) {
 		builder.registerTableLayouts(options.tableLayouts);
 	}
 
-	var pages = builder.layoutDocument(docDefinition.content, this.fontProvider, docDefinition.styles || {}, docDefinition.defaultStyle || {
+	var pages = await builder.layoutDocument(docDefinition.content, this.fontProvider, docDefinition.styles || {}, docDefinition.defaultStyle || {
 		fontSize: 12,
 		font: 'Roboto'
 	}, docDefinition.background, docDefinition.header, docDefinition.footer, docDefinition.images, docDefinition.watermark, docDefinition.pageBreakBefore);
