@@ -24,6 +24,9 @@ class DocPreprocessor {
 	}
 
 	preprocessNode(node) {
+
+		console.log(node);
+
 		// expand shortcuts and casting values
 		if (Array.isArray(node)) {
 			node = { stack: node };

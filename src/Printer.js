@@ -79,11 +79,121 @@ class PdfPrinter {
 						builder.registerTableLayouts(options.tableLayouts);
 					}
 
-					let pages = builder.layoutDocument(docDefinition.content, this.pdfKitDoc, docDefinition.styles || {}, docDefinition.defaultStyle || { fontSize: 12, font: 'Roboto' }, docDefinition.background, docDefinition.header, docDefinition.footer, docDefinition.watermark, docDefinition.pageBreakBefore);
+					// let pages = builder.layoutDocument(docDefinition.content, this.pdfKitDoc, docDefinition.styles || {}, docDefinition.defaultStyle || { fontSize: 12, font: 'Roboto' }, docDefinition.background, docDefinition.header, docDefinition.footer, docDefinition.watermark, docDefinition.pageBreakBefore);
+					// let maxNumberPages = docDefinition.maxPagesNumber || -1;
+					// if (isNumber(maxNumberPages) && maxNumberPages > -1) {
+					// 	pages = pages.slice(0, maxNumberPages);
+					// }
+
+					// // if pageSize.height is set to Infinity, calculate the actual height of the page that
+					// // was laid out using the height of each of the items in the page.
+					// if (pageSize.height === Infinity) {
+					// 	let pageHeight = calculatePageHeight(pages, docDefinition.pageMargins);
+					// 	this.pdfKitDoc.options.size = [pageSize.width, pageHeight];
+					// }
+
+					// const renderer = new Renderer(this.pdfKitDoc, options.progressCallback);
+					// renderer.renderPages(pages);
+
+
+
+					let pages = builder.layoutDocument(
+						docDefinition.content,
+						this.pdfKitDoc,
+						docDefinition.styles || {},
+						docDefinition.defaultStyle || { fontSize: 12, font: 'Roboto' },
+						docDefinition.background,
+						docDefinition.header,
+						docDefinition.footer,
+						docDefinition.watermark,
+						docDefinition.pageBreakBefore);
 					let maxNumberPages = docDefinition.maxPagesNumber || -1;
 					if (isNumber(maxNumberPages) && maxNumberPages > -1) {
 						pages = pages.slice(0, maxNumberPages);
 					}
+
+					// console.log(docDefinition.content, pages[0].items);
+
+					// if pageSize.height is set to Infinity, calculate the actual height of the page that
+					// was laid out using the height of each of the items in the page.
+					if (pageSize.height === Infinity) {
+						let pageHeight = calculatePageHeight(pages, docDefinition.pageMargins);
+						this.pdfKitDoc.options.size = [pageSize.width, pageHeight];
+					}
+
+					const renderer = new Renderer(this.pdfKitDoc, options.progressCallback);
+					renderer.renderPages(pages);
+
+					resolve(this.pdfKitDoc);
+				} catch (e) {
+					reject(e);
+				}
+			}, result => {
+				reject(result);
+			});
+		});
+	}
+
+	/**
+ * Executes layout engine for the specified document and renders it into a pdfkit document
+ * ready to be saved.
+ *
+ * @param {object} docDefinition
+ * @param {object} options
+ * @returns {Promise<PDFDocument>} resolved promise return a pdfkit document
+ */
+	createStreamablePdfKitDocument(docDefinition, options = {}) {
+		return new Promise((resolve, reject) => {
+			this.resolveUrls(docDefinition).then(() => {
+				try {
+					docDefinition.version = docDefinition.version || '1.3';
+					docDefinition.compress = typeof docDefinition.compress === 'boolean' ? docDefinition.compress : true;
+					docDefinition.images = docDefinition.images || {};
+					docDefinition.attachments = docDefinition.attachments || {};
+					docDefinition.pageMargins = isValue(docDefinition.pageMargins) ? docDefinition.pageMargins : 40;
+					docDefinition.patterns = docDefinition.patterns || {};
+
+					let pageSize = normalizePageSize(docDefinition.pageSize, docDefinition.pageOrientation);
+
+					let pdfOptions = {
+						size: [pageSize.width, pageSize.height],
+						pdfVersion: docDefinition.version,
+						compress: docDefinition.compress,
+						userPassword: docDefinition.userPassword,
+						ownerPassword: docDefinition.ownerPassword,
+						permissions: docDefinition.permissions,
+						fontLayoutCache: typeof options.fontLayoutCache === 'boolean' ? options.fontLayoutCache : true,
+						bufferPages: options.bufferPages || false,
+						autoFirstPage: false,
+						info: createMetadata(docDefinition),
+						font: null
+					};
+
+					this.pdfKitDoc = new PDFDocument(this.fontDescriptors, docDefinition.images, docDefinition.patterns, docDefinition.attachments, pdfOptions, this.virtualfs);
+					embedFiles(docDefinition, this.pdfKitDoc);
+
+					const builder = new LayoutBuilder(pageSize, normalizePageMargin(docDefinition.pageMargins), new SVGMeasure());
+
+					builder.registerTableLayouts(tableLayouts);
+					if (options.tableLayouts) {
+						builder.registerTableLayouts(options.tableLayouts);
+					}
+
+					let pages = builder.layoutStreamableDocument(
+						this.pdfKitDoc,
+						docDefinition.styles || {},
+						docDefinition.defaultStyle || { fontSize: 12, font: 'Roboto' },
+						docDefinition.background,
+						docDefinition.header,
+						docDefinition.footer,
+						docDefinition.watermark,
+						docDefinition.pageBreakBefore);
+					let maxNumberPages = docDefinition.maxPagesNumber || -1;
+					if (isNumber(maxNumberPages) && maxNumberPages > -1) {
+						pages = pages.slice(0, maxNumberPages);
+					}
+
+					// console.log(docDefinition.content, pages[0].items);
 
 					// if pageSize.height is set to Infinity, calculate the actual height of the page that
 					// was laid out using the height of each of the items in the page.

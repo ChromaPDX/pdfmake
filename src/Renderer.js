@@ -65,6 +65,7 @@ class Renderer {
 			let page = pages[i];
 			for (let ii = 0, il = page.items.length; ii < il; ii++) {
 				let item = page.items[ii];
+
 				switch (item.type) {
 					case 'vector':
 						this.renderVector(item.item);

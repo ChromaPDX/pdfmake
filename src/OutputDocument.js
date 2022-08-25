@@ -22,11 +22,11 @@ class OutputDocument {
 	getBuffer() {
 		if (this.bufferPromise === null) {
 			this.bufferPromise = new Promise((resolve, reject) => {
-				this.getStream().then(stream => {
+				this.getStream().then(async stream => {
 
 					let chunks = [];
 					let result;
-					stream.on('readable', () => {
+					(await stream).on('readable', () => {
 						let chunk;
 						while ((chunk = stream.read(this.bufferSize)) !== null) {
 							chunks.push(chunk);

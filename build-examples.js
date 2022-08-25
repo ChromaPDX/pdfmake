@@ -6,7 +6,7 @@ var position = 0;
 process.chdir('examples');
 
 const items = fs.readdirSync('.');
-const files = items.filter(file => file.substring(file.length - 3, file.length) === '.js');
+const files = items.filter(file => file === 'streamable.js' && file.substring(file.length - 3, file.length) === '.js');
 
 files.forEach(function (file) {
   exec(`node ${file}`, function (err, stdout, stderr) {

@@ -21,6 +21,10 @@ class OutputDocumentServer extends OutputDocument {
 		});
 	}
 
+	addContent(content) {
+		console.log(this)
+	}
+
 }
 
 export default OutputDocumentServer;

@@ -156,6 +156,121 @@ class LayoutBuilder {
 		return result.pages;
 	}
 
+	/**
+ * Executes layout engine on document-definition-object and creates an array of pages
+ * containing positioned Blocks, Lines and inlines
+ *
+ * @param {object} pdfDocument pdfkit document
+ * @param {object} styleDictionary dictionary with style definitions
+ * @param {object} defaultStyle default style definition
+ * @param {object} background
+ * @param {object} header
+ * @param {object} footer
+ * @param {object} watermark
+ * @param {object} pageBreakBeforeFct
+ */
+	layoutStreamableDocument(
+		// docStructure,
+		pdfDocument,
+		styleDictionary,
+		defaultStyle,
+		background,
+		header,
+		footer,
+		watermark,
+		pageBreakBeforeFct
+	) {
+		this.docPreprocessor = new DocPreprocessor();
+		this.docMeasure = new DocMeasure(pdfDocument, styleDictionary, defaultStyle, this.svgMeasure, this.tableLayouts);
+
+		// function addPageBreaksIfNecessary(linearNodeList, pages) {
+
+		// 	if (typeof pageBreakBeforeFct !== 'function') {
+		// 		return false;
+		// 	}
+
+		// 	linearNodeList = linearNodeList.filter(node => node.positions.length > 0);
+
+		// 	linearNodeList.forEach(node => {
+		// 		let nodeInfo = {};
+		// 		[
+		// 			'id', 'text', 'ul', 'ol', 'table', 'image', 'qr', 'canvas', 'svg', 'columns',
+		// 			'headlineLevel', 'style', 'pageBreak', 'pageOrientation',
+		// 			'width', 'height'
+		// 		].forEach(key => {
+		// 			if (node[key] !== undefined) {
+		// 				nodeInfo[key] = node[key];
+		// 			}
+		// 		});
+		// 		nodeInfo.startPosition = node.positions[0];
+		// 		nodeInfo.pageNumbers = Array.from(new Set(node.positions.map(node => node.pageNumber)));
+		// 		nodeInfo.pages = pages.length;
+		// 		nodeInfo.stack = Array.isArray(node.stack);
+
+		// 		node.nodeInfo = nodeInfo;
+		// 	});
+
+		// 	for (let index = 0; index < linearNodeList.length; index++) {
+		// 		let node = linearNodeList[index];
+		// 		if (node.pageBreak !== 'before' && !node.pageBreakCalculated) {
+		// 			node.pageBreakCalculated = true;
+		// 			let pageNumber = node.nodeInfo.pageNumbers[0];
+
+		// 			if (
+		// 				pageBreakBeforeFct(node.nodeInfo, {
+		// 					getFollowingNodesOnPage: () => {
+		// 						let followingNodesOnPage = [];
+		// 						for (let ii = index + 1, l = linearNodeList.length; ii < l; ii++) {
+		// 							if (linearNodeList[ii].nodeInfo.pageNumbers.indexOf(pageNumber) > -1) {
+		// 								followingNodesOnPage.push(linearNodeList[ii].nodeInfo);
+		// 							}
+		// 						}
+		// 						return followingNodesOnPage;
+		// 					},
+		// 					getNodesOnNextPage: () => {
+		// 						let nodesOnNextPage = [];
+		// 						for (let ii = index + 1, l = linearNodeList.length; ii < l; ii++) {
+		// 							if (linearNodeList[ii].nodeInfo.pageNumbers.indexOf(pageNumber + 1) > -1) {
+		// 								nodesOnNextPage.push(linearNodeList[ii].nodeInfo);
+		// 							}
+		// 						}
+		// 						return nodesOnNextPage;
+		// 					},
+		// 					getPreviousNodesOnPage: () => {
+		// 						let previousNodesOnPage = [];
+		// 						for (let ii = 0; ii < index; ii++) {
+		// 							if (linearNodeList[ii].nodeInfo.pageNumbers.indexOf(pageNumber) > -1) {
+		// 								previousNodesOnPage.push(linearNodeList[ii].nodeInfo);
+		// 							}
+		// 						}
+		// 						return previousNodesOnPage;
+		// 					},
+		// 				})
+		// 			) {
+		// 				node.pageBreak = 'before';
+		// 				return true;
+		// 			}
+		// 		}
+		// 	}
+
+		// 	return false;
+		// }
+
+		// function resetXYs(result) {
+		// 	result.linearNodeList.forEach(node => {
+		// 		node.resetXY();
+		// 	});
+		// }
+
+		// let result = this.tryLayoutDocument(docStructure, pdfDocument, styleDictionary, defaultStyle, background, header, footer, watermark);
+		// while (addPageBreaksIfNecessary(result.linearNodeList, result.pages)) {
+		// 	resetXYs(result);
+		// 	result = this.tryLayoutDocument(docStructure, pdfDocument, styleDictionary, defaultStyle, background, header, footer, watermark);
+		// }
+
+		// return result.pages;
+	}
+
 	tryLayoutDocument(
 		docStructure,
 		pdfDocument,
@@ -352,6 +467,9 @@ class LayoutBuilder {
 	}
 
 	processNode(node) {
+
+
+
 		const applyMargins = callback => {
 			let margin = node._margin;
 

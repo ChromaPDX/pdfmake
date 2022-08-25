@@ -24,6 +24,20 @@ class pdfmake {
 		return this._transformToDocument(pdfDocumentPromise);
 	}
 
+	addContent(content) {
+		return content;
+	}
+
+	// createStreamablePdf(docDefinition, options = {}) {
+	// 	options.progressCallback = this.progressCallback;
+	// 	options.tableLayouts = this.tableLayouts;
+
+	// 	let printer = new Printer(this.fonts, this.virtualfs, this.urlResolver);
+	// 	const pdfDocumentPromise = printer.createStreamablePdfKitDocument(docDefinition, options);
+
+	// 	return this._transformToDocument(pdfDocumentPromise);
+	// }
+
 	setProgressCallback(callback) {
 		this.progressCallback = callback;
 	}
