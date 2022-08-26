@@ -1,25 +1,25 @@
-'use strict';
+"use strict";
 
-var TraversalTracker = require('./traversalTracker');
-var DocPreprocessor = require('./docPreprocessor');
-var DocMeasure = require('./docMeasure');
-var DocumentContext = require('./documentContext');
-var PageElementWriter = require('./pageElementWriter');
-var ColumnCalculator = require('./columnCalculator');
-var TableProcessor = require('./tableProcessor');
-var Line = require('./line');
-var isString = require('./helpers').isString;
-var isArray = require('./helpers').isArray;
-var isUndefined = require('./helpers').isUndefined;
-var isNull = require('./helpers').isNull;
-var pack = require('./helpers').pack;
-var offsetVector = require('./helpers').offsetVector;
-var fontStringify = require('./helpers').fontStringify;
-var getNodeId = require('./helpers').getNodeId;
-var isFunction = require('./helpers').isFunction;
-var TextTools = require('./textTools');
-var StyleContextStack = require('./styleContextStack');
-var isNumber = require('./helpers').isNumber;
+var TraversalTracker = require("./traversalTracker");
+var DocPreprocessor = require("./docPreprocessor");
+var DocMeasure = require("./docMeasure");
+var DocumentContext = require("./documentContext");
+var PageElementWriter = require("./pageElementWriter");
+var ColumnCalculator = require("./columnCalculator");
+var TableProcessor = require("./tableProcessor");
+var Line = require("./line");
+var isString = require("./helpers").isString;
+var isArray = require("./helpers").isArray;
+var isUndefined = require("./helpers").isUndefined;
+var isNull = require("./helpers").isNull;
+var pack = require("./helpers").pack;
+var offsetVector = require("./helpers").offsetVector;
+var fontStringify = require("./helpers").fontStringify;
+var getNodeId = require("./helpers").getNodeId;
+var isFunction = require("./helpers").isFunction;
+var TextTools = require("./textTools");
+var StyleContextStack = require("./styleContextStack");
+var isNumber = require("./helpers").isNumber;
 
 function addAll(target, otherArray) {
 	otherArray.forEach(function (item) {
@@ -57,11 +57,19 @@ LayoutBuilder.prototype.registerTableLayouts = function (tableLayouts) {
  * @param {Object} defaultStyle default style definition
  * @return {Array} an array of pages
  */
-LayoutBuilder.prototype.layoutDocument = async function (docStructure, fontProvider, styleDictionary, defaultStyle, background, header, footer, images, watermark, pageBreakBeforeFct) {
-
-
+LayoutBuilder.prototype.layoutDocument = async function (
+	docStructure,
+	fontProvider,
+	styleDictionary,
+	defaultStyle,
+	background,
+	header,
+	footer,
+	images,
+	watermark,
+	pageBreakBeforeFct
+) {
 	function addPageBreaksIfNecessary(linearNodeList, pages) {
-
 		if (!isFunction(pageBreakBeforeFct)) {
 			return false;
 		}
@@ -73,16 +81,35 @@ LayoutBuilder.prototype.layoutDocument = async function (docStructure, fontProvi
 		linearNodeList.forEach(function (node) {
 			var nodeInfo = {};
 			[
-				'id', 'text', 'ul', 'ol', 'table', 'image', 'qr', 'canvas', 'svg', 'columns',
-				'headlineLevel', 'style', 'pageBreak', 'pageOrientation',
-				'width', 'height'
+				"id",
+				"text",
+				"ul",
+				"ol",
+				"table",
+				"image",
+				"qr",
+				"canvas",
+				"svg",
+				"columns",
+				"headlineLevel",
+				"style",
+				"pageBreak",
+				"pageOrientation",
+				"width",
+				"height",
 			].forEach(function (key) {
 				if (node[key] !== undefined) {
 					nodeInfo[key] = node[key];
 				}
 			});
 			nodeInfo.startPosition = node.positions[0];
-			nodeInfo.pageNumbers = Array.from(new Set(node.positions.map(function (node) { return node.pageNumber; })));
+			nodeInfo.pageNumbers = Array.from(
+				new Set(
+					node.positions.map(function (node) {
+						return node.pageNumber;
+					})
+				)
+			);
 			nodeInfo.pages = pages.length;
 			nodeInfo.stack = isArray(node.stack);
 
@@ -91,7 +118,7 @@ LayoutBuilder.prototype.layoutDocument = async function (docStructure, fontProvi
 
 		for (var index = 0; index < linearNodeList.length; index++) {
 			var node = linearNodeList[index];
-			if (node.pageBreak !== 'before' && !node.pageBreakCalculated) {
+			if (node.pageBreak !== "before" && !node.pageBreakCalculated) {
 				node.pageBreakCalculated = true;
 				var pageNumber = node.nodeInfo.pageNumbers[0];
 				var followingNodesOnPage = [];
@@ -99,23 +126,38 @@ LayoutBuilder.prototype.layoutDocument = async function (docStructure, fontProvi
 				var previousNodesOnPage = [];
 				if (pageBreakBeforeFct.length > 1) {
 					for (var ii = index + 1, l = linearNodeList.length; ii < l; ii++) {
-						if (linearNodeList[ii].nodeInfo.pageNumbers.indexOf(pageNumber) > -1) {
+						if (
+							linearNodeList[ii].nodeInfo.pageNumbers.indexOf(pageNumber) > -1
+						) {
 							followingNodesOnPage.push(linearNodeList[ii].nodeInfo);
 						}
-						if (pageBreakBeforeFct.length > 2 && linearNodeList[ii].nodeInfo.pageNumbers.indexOf(pageNumber + 1) > -1) {
+						if (
+							pageBreakBeforeFct.length > 2 &&
+							linearNodeList[ii].nodeInfo.pageNumbers.indexOf(pageNumber + 1) >
+								-1
+						) {
 							nodesOnNextPage.push(linearNodeList[ii].nodeInfo);
 						}
 					}
 				}
 				if (pageBreakBeforeFct.length > 3) {
 					for (var ii = 0; ii < index; ii++) {
-						if (linearNodeList[ii].nodeInfo.pageNumbers.indexOf(pageNumber) > -1) {
+						if (
+							linearNodeList[ii].nodeInfo.pageNumbers.indexOf(pageNumber) > -1
+						) {
 							previousNodesOnPage.push(linearNodeList[ii].nodeInfo);
 						}
 					}
 				}
-				if (pageBreakBeforeFct(node.nodeInfo, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage)) {
-					node.pageBreak = 'before';
+				if (
+					pageBreakBeforeFct(
+						node.nodeInfo,
+						followingNodesOnPage,
+						nodesOnNextPage,
+						previousNodesOnPage
+					)
+				) {
+					node.pageBreak = "before";
 					return true;
 				}
 			}
@@ -125,8 +167,15 @@ LayoutBuilder.prototype.layoutDocument = async function (docStructure, fontProvi
 	}
 
 	this.docPreprocessor = new DocPreprocessor();
-	this.docMeasure = new DocMeasure(fontProvider, styleDictionary, defaultStyle, this.imageMeasure, this.svgMeasure, this.tableLayouts, images);
-
+	this.docMeasure = new DocMeasure(
+		fontProvider,
+		styleDictionary,
+		defaultStyle,
+		this.imageMeasure,
+		this.svgMeasure,
+		this.tableLayouts,
+		images
+	);
 
 	function resetXYs(result) {
 		result.linearNodeList.forEach(function (node) {
@@ -134,74 +183,80 @@ LayoutBuilder.prototype.layoutDocument = async function (docStructure, fontProvi
 		});
 	}
 
-	var result = await this.tryLayoutDocument(docStructure, fontProvider, styleDictionary, defaultStyle, background, header, footer, images, watermark);
+	var result = await this.tryLayoutDocument(
+		docStructure,
+		fontProvider,
+		styleDictionary,
+		defaultStyle,
+		background,
+		header,
+		footer,
+		images,
+		watermark
+	);
 	while (addPageBreaksIfNecessary(result.linearNodeList, result.pages)) {
 		resetXYs(result);
-		result = await this.tryLayoutDocument(docStructure, fontProvider, styleDictionary, defaultStyle, background, header, footer, images, watermark);
+		result = await this.tryLayoutDocument(
+			docStructure,
+			fontProvider,
+			styleDictionary,
+			defaultStyle,
+			background,
+			header,
+			footer,
+			images,
+			watermark
+		);
 	}
 
 	return result.pages;
 };
 
-// https://alphahydrae.com/2021/02/a-javascript-function-that-recursively-resolves-promises/
-async function resolver(value) {
-	// Await the value in case it's a promise.
-	const resolved = await value;
-
-	if (isPlainObject(resolved)) {
-		const entries = Object.entries(resolved);
-		const resolvedEntries = entries.map(
-			// Recursively resolve object values.
-			async ([key, value]) => [key, await resolver(value)]
-		);
-		return Object.fromEntries(
-			await Promise.all(resolvedEntries)
-		);
-	} else if (Array.isArray(resolved)) {
-		// Recursively resolve array values.
-		return Promise.all(resolved.map(resolver));
-	}
-
-	return resolved;
-}
-
-function isPlainObject(value) {
-	return typeof value === 'object' &&
-		value !== null &&
-		value.constructor === Object;
-}
-
-LayoutBuilder.prototype.tryLayoutDocument = async function (docStructure, fontProvider, styleDictionary, defaultStyle, background, header, footer, images, watermark, pageBreakBeforeFct) {
-
+LayoutBuilder.prototype.tryLayoutDocument = async function (
+	docStructure,
+	fontProvider,
+	styleDictionary,
+	defaultStyle,
+	background,
+	header,
+	footer,
+	images,
+	watermark,
+	pageBreakBeforeFct
+) {
 	this.linearNodeList = [];
 	docStructure = this.docPreprocessor.preprocessDocument(docStructure);
 	docStructure = this.docMeasure.measureDocument(docStructure);
-
 	this.writer = new PageElementWriter(
-		new DocumentContext(this.pageSize, this.pageMargins), this.tracker);
+		new DocumentContext(this.pageSize, this.pageMargins),
+		this.tracker
+	);
 
 	var _this = this;
-	this.writer.context().tracker.startTracking('pageAdded', function () {
-		_this.addBackground(background);
+	this.writer.context().tracker.startTracking("pageAdded", async function () {
+		await _this.addBackground(background);
 	});
 
-	this.addBackground(background);
-	docStructure = await resolver(docStructure)
+	await this.addBackground(background);
 
-	this.processNode(docStructure);
-	this.addHeadersAndFooters(header, footer);
+	await this.processNode(docStructure);
+	await this.addHeadersAndFooters(header, footer);
 	if (watermark != null) {
-		this.addWatermark(watermark, fontProvider, defaultStyle);
+		await this.addWatermark(watermark, fontProvider, defaultStyle);
 	}
 
-	return { pages: this.writer.context().pages, linearNodeList: this.linearNodeList };
+	return {
+		pages: this.writer.context().pages,
+		linearNodeList: this.linearNodeList,
+	};
 };
 
-
-LayoutBuilder.prototype.addBackground = function (background) {
-	var backgroundGetter = isFunction(background) ? background : function () {
-		return background;
-	};
+LayoutBuilder.prototype.addBackground = async function (background) {
+	var backgroundGetter = isFunction(background)
+		? background
+		: function () {
+				return background;
+		  };
 
 	var context = this.writer.context();
 	var pageSize = context.getCurrentPage().pageSize;
@@ -211,43 +266,56 @@ LayoutBuilder.prototype.addBackground = function (background) {
 	if (pageBackground) {
 		this.writer.beginUnbreakableBlock(pageSize.width, pageSize.height);
 		pageBackground = this.docPreprocessor.preprocessDocument(pageBackground);
-		this.processNode(this.docMeasure.measureDocument(pageBackground));
+		await this.processNode(this.docMeasure.measureDocument(pageBackground));
 		this.writer.commitUnbreakableBlock(0, 0);
 		context.backgroundLength[context.page] += pageBackground.positions.length;
 	}
 };
 
-LayoutBuilder.prototype.addStaticRepeatable = function (headerOrFooter, sizeFunction) {
+LayoutBuilder.prototype.addStaticRepeatable = function (
+	headerOrFooter,
+	sizeFunction
+) {
 	this.addDynamicRepeatable(function () {
 		return JSON.parse(JSON.stringify(headerOrFooter)); // copy to new object
 	}, sizeFunction);
 };
 
-LayoutBuilder.prototype.addDynamicRepeatable = function (nodeGetter, sizeFunction) {
+LayoutBuilder.prototype.addDynamicRepeatable = async function (
+	nodeGetter,
+	sizeFunction
+) {
 	var pages = this.writer.context().pages;
 
 	for (var pageIndex = 0, l = pages.length; pageIndex < l; pageIndex++) {
 		this.writer.context().page = pageIndex;
 
-		var node = nodeGetter(pageIndex + 1, l, this.writer.context().pages[pageIndex].pageSize);
+		var node = nodeGetter(
+			pageIndex + 1,
+			l,
+			this.writer.context().pages[pageIndex].pageSize
+		);
 
 		if (node) {
-			var sizes = sizeFunction(this.writer.context().getCurrentPage().pageSize, this.pageMargins);
+			var sizes = sizeFunction(
+				this.writer.context().getCurrentPage().pageSize,
+				this.pageMargins
+			);
 			this.writer.beginUnbreakableBlock(sizes.width, sizes.height);
 			node = this.docPreprocessor.preprocessDocument(node);
-			this.processNode(this.docMeasure.measureDocument(node));
+			await this.processNode(this.docMeasure.measureDocument(node));
 			this.writer.commitUnbreakableBlock(sizes.x, sizes.y);
 		}
 	}
 };
 
-LayoutBuilder.prototype.addHeadersAndFooters = function (header, footer) {
+LayoutBuilder.prototype.addHeadersAndFooters = async function (header, footer) {
 	var headerSizeFct = function (pageSize, pageMargins) {
 		return {
 			x: 0,
 			y: 0,
 			width: pageSize.width,
-			height: pageMargins.top
+			height: pageMargins.top,
 		};
 	};
 
@@ -256,55 +324,72 @@ LayoutBuilder.prototype.addHeadersAndFooters = function (header, footer) {
 			x: 0,
 			y: pageSize.height - pageMargins.bottom,
 			width: pageSize.width,
-			height: pageMargins.bottom
+			height: pageMargins.bottom,
 		};
 	};
 
 	if (isFunction(header)) {
-		this.addDynamicRepeatable(header, headerSizeFct);
+		await this.addDynamicRepeatable(header, headerSizeFct);
 	} else if (header) {
-		this.addStaticRepeatable(header, headerSizeFct);
+		await this.addStaticRepeatable(header, headerSizeFct);
 	}
 
 	if (isFunction(footer)) {
-		this.addDynamicRepeatable(footer, footerSizeFct);
+		await this.addDynamicRepeatable(footer, footerSizeFct);
 	} else if (footer) {
-		this.addStaticRepeatable(footer, footerSizeFct);
+		await this.addStaticRepeatable(footer, footerSizeFct);
 	}
 };
 
-LayoutBuilder.prototype.addWatermark = function (watermark, fontProvider, defaultStyle) {
+LayoutBuilder.prototype.addWatermark = function (
+	watermark,
+	fontProvider,
+	defaultStyle
+) {
 	if (isString(watermark)) {
-		watermark = { 'text': watermark };
+		watermark = { text: watermark };
 	}
 
-	if (!watermark.text) { // empty watermark text
+	if (!watermark.text) {
+		// empty watermark text
 		return;
 	}
 
-	watermark.font = watermark.font || defaultStyle.font || 'Roboto';
-	watermark.fontSize = watermark.fontSize || 'auto';
-	watermark.color = watermark.color || 'black';
+	watermark.font = watermark.font || defaultStyle.font || "Roboto";
+	watermark.fontSize = watermark.fontSize || "auto";
+	watermark.color = watermark.color || "black";
 	watermark.opacity = isNumber(watermark.opacity) ? watermark.opacity : 0.6;
 	watermark.bold = watermark.bold || false;
 	watermark.italics = watermark.italics || false;
-	watermark.angle = !isUndefined(watermark.angle) && !isNull(watermark.angle) ? watermark.angle : null;
+	watermark.angle =
+		!isUndefined(watermark.angle) && !isNull(watermark.angle)
+			? watermark.angle
+			: null;
 
 	if (watermark.angle === null) {
-		watermark.angle = Math.atan2(this.pageSize.height, this.pageSize.width) * -180 / Math.PI;
+		watermark.angle =
+			(Math.atan2(this.pageSize.height, this.pageSize.width) * -180) / Math.PI;
 	}
 
-	if (watermark.fontSize === 'auto') {
-		watermark.fontSize = getWatermarkFontSize(this.pageSize, watermark, fontProvider);
+	if (watermark.fontSize === "auto") {
+		watermark.fontSize = getWatermarkFontSize(
+			this.pageSize,
+			watermark,
+			fontProvider
+		);
 	}
 
 	var watermarkObject = {
 		text: watermark.text,
-		font: fontProvider.provideFont(watermark.font, watermark.bold, watermark.italics),
+		font: fontProvider.provideFont(
+			watermark.font,
+			watermark.bold,
+			watermark.italics
+		),
 		fontSize: watermark.fontSize,
 		color: watermark.color,
 		opacity: watermark.opacity,
-		angle: watermark.angle
+		angle: watermark.angle,
 	};
 
 	watermarkObject._size = getWatermarkSize(watermark, fontProvider);
@@ -316,21 +401,33 @@ LayoutBuilder.prototype.addWatermark = function (watermark, fontProvider, defaul
 
 	function getWatermarkSize(watermark, fontProvider) {
 		var textTools = new TextTools(fontProvider);
-		var styleContextStack = new StyleContextStack(null, { font: watermark.font, bold: watermark.bold, italics: watermark.italics });
+		var styleContextStack = new StyleContextStack(null, {
+			font: watermark.font,
+			bold: watermark.bold,
+			italics: watermark.italics,
+		});
 
 		styleContextStack.push({
-			fontSize: watermark.fontSize
+			fontSize: watermark.fontSize,
 		});
 
 		var size = textTools.sizeOfString(watermark.text, styleContextStack);
-		var rotatedSize = textTools.sizeOfRotatedText(watermark.text, watermark.angle, styleContextStack);
+		var rotatedSize = textTools.sizeOfRotatedText(
+			watermark.text,
+			watermark.angle,
+			styleContextStack
+		);
 
 		return { size: size, rotatedSize: rotatedSize };
 	}
 
 	function getWatermarkFontSize(pageSize, watermark, fontProvider) {
 		var textTools = new TextTools(fontProvider);
-		var styleContextStack = new StyleContextStack(null, { font: watermark.font, bold: watermark.bold, italics: watermark.italics });
+		var styleContextStack = new StyleContextStack(null, {
+			font: watermark.font,
+			bold: watermark.bold,
+			italics: watermark.italics,
+		});
 		var rotatedSize;
 
 		/**
@@ -343,9 +440,13 @@ LayoutBuilder.prototype.addWatermark = function (watermark, fontProvider, defaul
 		var c = (a + b) / 2;
 		while (Math.abs(a - b) > 1) {
 			styleContextStack.push({
-				fontSize: c
+				fontSize: c,
 			});
-			rotatedSize = textTools.sizeOfRotatedText(watermark.text, watermark.angle, styleContextStack);
+			rotatedSize = textTools.sizeOfRotatedText(
+				watermark.text,
+				watermark.angle,
+				styleContextStack
+			);
 			if (rotatedSize.width > pageSize.width) {
 				b = c;
 				c = (a + b) / 2;
@@ -368,12 +469,18 @@ LayoutBuilder.prototype.addWatermark = function (watermark, fontProvider, defaul
 };
 
 function decorateNode(node) {
-	var x = node.x, y = node.y;
+	var x = node.x,
+		y = node.y;
 	node.positions = [];
 
 	if (isArray(node.canvas)) {
 		node.canvas.forEach(function (vector) {
-			var x = vector.x, y = vector.y, x1 = vector.x1, y1 = vector.y1, x2 = vector.x2, y2 = vector.y2;
+			var x = vector.x,
+				y = vector.y,
+				x1 = vector.x1,
+				y1 = vector.y1,
+				x2 = vector.x2,
+				y2 = vector.y2;
 			vector.resetXY = function () {
 				vector.x = x;
 				vector.y = y;
@@ -396,13 +503,13 @@ function decorateNode(node) {
 	};
 }
 
-LayoutBuilder.prototype.processNode = function (node) {
+LayoutBuilder.prototype.processNode = async function (node) {
 	var self = this;
 
 	this.linearNodeList.push(node);
 	decorateNode(node);
 
-	applyMargins(function () {
+	await applyMargins(function () {
 		var unbreakable = node.unbreakable;
 		if (unbreakable) {
 			self.writer.beginUnbreakableBlock();
@@ -417,7 +524,9 @@ LayoutBuilder.prototype.processNode = function (node) {
 		var relPosition = node.relativePosition;
 		if (relPosition) {
 			self.writer.context().beginDetachedBlock();
-			self.writer.context().moveToRelative(relPosition.x || 0, relPosition.y || 0);
+			self.writer
+				.context()
+				.moveToRelative(relPosition.x || 0, relPosition.y || 0);
 		}
 
 		if (node.stack) {
@@ -443,9 +552,13 @@ LayoutBuilder.prototype.processNode = function (node) {
 		} else if (node.qr) {
 			self.processQr(node);
 		} else if (node.qrV2) {
+			console.log("render qrV2", node);
 			self.processQrV2(node);
 		} else if (!node._span) {
-			throw 'Unrecognized document structure: ' + JSON.stringify(node, fontStringify);
+			throw (
+				"Unrecognized document structure: " +
+				JSON.stringify(node, fontStringify)
+			);
 		}
 
 		if (absPosition || relPosition) {
@@ -457,17 +570,17 @@ LayoutBuilder.prototype.processNode = function (node) {
 		}
 	});
 
-	function applyMargins(callback) {
+	async function  applyMargins(callback) {
 		var margin = node._margin;
 
-		if (node.pageBreak === 'before') {
+		if (node.pageBreak === "before") {
 			self.writer.moveToNextPage(node.pageOrientation);
-		} else if (node.pageBreak === 'beforeOdd') {
+		} else if (node.pageBreak === "beforeOdd") {
 			self.writer.moveToNextPage(node.pageOrientation);
 			if ((self.writer.context().page + 1) % 2 === 1) {
 				self.writer.moveToNextPage(node.pageOrientation);
 			}
-		} else if (node.pageBreak === 'beforeEven') {
+		} else if (node.pageBreak === "beforeEven") {
 			self.writer.moveToNextPage(node.pageOrientation);
 			if ((self.writer.context().page + 1) % 2 === 0) {
 				self.writer.moveToNextPage(node.pageOrientation);
@@ -479,21 +592,21 @@ LayoutBuilder.prototype.processNode = function (node) {
 			self.writer.context().addMargin(margin[0], margin[2]);
 		}
 
-		callback();
+		await callback();
 
 		if (margin) {
 			self.writer.context().addMargin(-margin[0], -margin[2]);
 			self.writer.context().moveDown(margin[3]);
 		}
 
-		if (node.pageBreak === 'after') {
+		if (node.pageBreak === "after") {
 			self.writer.moveToNextPage(node.pageOrientation);
-		} else if (node.pageBreak === 'afterOdd') {
+		} else if (node.pageBreak === "afterOdd") {
 			self.writer.moveToNextPage(node.pageOrientation);
 			if ((self.writer.context().page + 1) % 2 === 1) {
 				self.writer.moveToNextPage(node.pageOrientation);
 			}
-		} else if (node.pageBreak === 'afterEven') {
+		} else if (node.pageBreak === "afterEven") {
 			self.writer.moveToNextPage(node.pageOrientation);
 			if ((self.writer.context().page + 1) % 2 === 0) {
 				self.writer.moveToNextPage(node.pageOrientation);
@@ -503,10 +616,10 @@ LayoutBuilder.prototype.processNode = function (node) {
 };
 
 // vertical container
-LayoutBuilder.prototype.processVerticalContainer = function (node) {
+LayoutBuilder.prototype.processVerticalContainer = async function (node) {
 	var self = this;
-	node.stack.forEach(function (item) {
-		self.processNode(item);
+	node.stack.forEach(async function (item) {
+		await self.processNode(item);
 		addAll(node.positions, item.positions);
 
 		//TODO: paragraph gap
@@ -514,7 +627,7 @@ LayoutBuilder.prototype.processVerticalContainer = function (node) {
 };
 
 // columns
-LayoutBuilder.prototype.processColumns = function (columnNode) {
+LayoutBuilder.prototype.processColumns = async function (columnNode) {
 	var columns = columnNode.columns;
 	var availableWidth = this.writer.context().availableWidth;
 	var gaps = gapArray(columnNode._gap);
@@ -526,7 +639,6 @@ LayoutBuilder.prototype.processColumns = function (columnNode) {
 	ColumnCalculator.buildColumnWidths(columns, availableWidth);
 	var result = this.processRow(columns, columns, gaps);
 	addAll(columnNode.positions, result.positions);
-
 
 	function gapArray(gap) {
 		if (!gap) {
@@ -544,11 +656,19 @@ LayoutBuilder.prototype.processColumns = function (columnNode) {
 	}
 };
 
-LayoutBuilder.prototype.processRow = function (columns, widths, gaps, tableBody, tableRow, height) {
+LayoutBuilder.prototype.processRow = async function (
+	columns,
+	widths,
+	gaps,
+	tableBody,
+	tableRow,
+	height
+) {
 	var self = this;
-	var pageBreaks = [], positions = [];
+	var pageBreaks = [],
+		positions = [];
 
-	this.tracker.auto('pageChanged', storePageBreakData, function () {
+	this.tracker.auto("pageChanged", storePageBreakData, function () {
 		widths = widths || columns;
 
 		self.writer.context().beginColumnGroup();
@@ -564,9 +684,11 @@ LayoutBuilder.prototype.processRow = function (columns, widths, gaps, tableBody,
 				}
 			}
 
-			self.writer.context().beginColumn(width, leftOffset, getEndingCell(column, i));
+			self.writer
+				.context()
+				.beginColumn(width, leftOffset, getEndingCell(column, i));
 			if (!column._span) {
-				self.processNode(column);
+				await self.processNode(column);
 				addAll(positions, column.positions);
 			} else if (column._columnEndingContext) {
 				// row-span ending
@@ -609,7 +731,11 @@ LayoutBuilder.prototype.processRow = function (columns, widths, gaps, tableBody,
 		if (column.rowSpan && column.rowSpan > 1) {
 			var endingRow = tableRow + column.rowSpan - 1;
 			if (endingRow >= tableBody.length) {
-				throw 'Row span for column ' + columnIndex + ' (with indexes starting from 0) exceeded row count';
+				throw (
+					"Row span for column " +
+					columnIndex +
+					" (with indexes starting from 0) exceeded row count"
+				);
 			}
 			return tableBody[endingRow][columnIndex];
 		}
@@ -619,7 +745,7 @@ LayoutBuilder.prototype.processRow = function (columns, widths, gaps, tableBody,
 };
 
 // lists
-LayoutBuilder.prototype.processList = function (orderedList, node) {
+LayoutBuilder.prototype.processList = async function (orderedList, node) {
 	var self = this,
 		items = orderedList ? node.ol : node.ul,
 		gapSize = node._gapSize;
@@ -627,10 +753,10 @@ LayoutBuilder.prototype.processList = function (orderedList, node) {
 	this.writer.context().addMargin(gapSize.width);
 
 	var nextMarker;
-	this.tracker.auto('lineAdded', addMarkerToFirstLeaf, function () {
+	this.tracker.auto("lineAdded", addMarkerToFirstLeaf, function () {
 		items.forEach(function (item) {
 			nextMarker = item.listMarker;
-			self.processNode(item);
+			await self.processNode(item);
 			addAll(node.positions, item.positions);
 		});
 	});
@@ -653,7 +779,8 @@ LayoutBuilder.prototype.processList = function (orderedList, node) {
 				var markerLine = new Line(self.pageSize.width);
 				markerLine.addInline(marker._inlines[0]);
 				markerLine.x = -marker._minWidth;
-				markerLine.y = line.getAscenderHeight() - markerLine.getAscenderHeight();
+				markerLine.y =
+					line.getAscenderHeight() - markerLine.getAscenderHeight();
 				self.writer.addLine(markerLine, true);
 			}
 		}
@@ -679,11 +806,18 @@ LayoutBuilder.prototype.processTable = function (tableNode) {
 			height = rowHeights;
 		}
 
-		if (height === 'auto') {
+		if (height === "auto") {
 			height = undefined;
 		}
 
-		var result = this.processRow(tableNode.table.body[i], tableNode.table.widths, tableNode._offsets.offsets, tableNode.table.body, i, height);
+		var result = this.processRow(
+			tableNode.table.body[i],
+			tableNode.table.widths,
+			tableNode._offsets.offsets,
+			tableNode.table.body,
+			i,
+			height
+		);
 		addAll(tableNode.positions, result.positions);
 
 		processor.endRow(i, this.writer, result.pageBreaks);
@@ -698,7 +832,7 @@ LayoutBuilder.prototype.processLeaf = function (node) {
 	if (line && (node.tocItem || node.id)) {
 		line._node = node;
 	}
-	var currentHeight = (line) ? line.getHeight() : 0;
+	var currentHeight = line ? line.getHeight() : 0;
 	var maxHeight = node.maxHeight || -1;
 
 	if (line) {
@@ -738,17 +872,16 @@ LayoutBuilder.prototype.processLeaf = function (node) {
 	}
 };
 
-LayoutBuilder.prototype.processToc = function (node) {
+LayoutBuilder.prototype.processToc = async function (node) {
 	if (node.toc.title) {
-		this.processNode(node.toc.title);
+		await this.processNode(node.toc.title);
 	}
 	if (node.toc._table) {
-		this.processNode(node.toc._table);
+		await this.processNode(node.toc._table);
 	}
 };
 
 LayoutBuilder.prototype.buildNextLine = function (textNode) {
-
 	function cloneInline(inline) {
 		var newInline = inline.constructor();
 		for (var key in inline) {
@@ -765,13 +898,24 @@ LayoutBuilder.prototype.buildNextLine = function (textNode) {
 	var textTools = new TextTools(null);
 
 	var isForceContinue = false;
-	while (textNode._inlines && textNode._inlines.length > 0 &&
-		(line.hasEnoughSpaceForInline(textNode._inlines[0], textNode._inlines.slice(1)) || isForceContinue)) {
+	while (
+		textNode._inlines &&
+		textNode._inlines.length > 0 &&
+		(line.hasEnoughSpaceForInline(
+			textNode._inlines[0],
+			textNode._inlines.slice(1)
+		) ||
+			isForceContinue)
+	) {
 		var isHardWrap = false;
 		var inline = textNode._inlines.shift();
 		isForceContinue = false;
 
-		if (!inline.noWrap && inline.text.length > 1 && inline.width > line.getAvailableWidth()) {
+		if (
+			!inline.noWrap &&
+			inline.text.length > 1 &&
+			inline.width > line.getAvailableWidth()
+		) {
 			var widthPerChar = inline.width / inline.text.length;
 			var maxChars = Math.floor(line.getAvailableWidth() / widthPerChar);
 			if (maxChars < 1) {
@@ -783,8 +927,20 @@ LayoutBuilder.prototype.buildNextLine = function (textNode) {
 				newInline.text = inline.text.substr(maxChars);
 				inline.text = inline.text.substr(0, maxChars);
 
-				newInline.width = textTools.widthOfString(newInline.text, newInline.font, newInline.fontSize, newInline.characterSpacing, newInline.fontFeatures);
-				inline.width = textTools.widthOfString(inline.text, inline.font, inline.fontSize, inline.characterSpacing, inline.fontFeatures);
+				newInline.width = textTools.widthOfString(
+					newInline.text,
+					newInline.font,
+					newInline.fontSize,
+					newInline.characterSpacing,
+					newInline.fontFeatures
+				);
+				inline.width = textTools.widthOfString(
+					inline.text,
+					inline.font,
+					inline.fontSize,
+					inline.characterSpacing,
+					inline.fontFeatures
+				);
 
 				textNode._inlines.unshift(newInline);
 				isHardWrap = true;
@@ -815,7 +971,10 @@ LayoutBuilder.prototype.processSVG = function (node) {
 LayoutBuilder.prototype.processCanvas = function (node) {
 	var height = node._minHeight;
 
-	if (node.absolutePosition === undefined && this.writer.context().availableHeight < height) {
+	if (
+		node.absolutePosition === undefined &&
+		this.writer.context().availableHeight < height
+	) {
 		// TODO: support for canvas larger than a page
 		// TODO: support for other overflow methods
 
@@ -841,6 +1000,5 @@ LayoutBuilder.prototype.processQrV2 = function (node) {
 	var position = this.writer.addQrV2(node);
 	node.positions.push(position);
 };
-
 
 module.exports = LayoutBuilder;

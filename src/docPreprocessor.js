@@ -11,14 +11,14 @@ function DocPreprocessor() {
 
 }
 
-DocPreprocessor.prototype.preprocessDocument = function (docStructure) {
+DocPreprocessor.prototype.preprocessDocument = async function (docStructure) {
 	this.parentNode = null;
 	this.tocs = [];
 	this.nodeReferences = [];
-	return this.preprocessNode(docStructure);
+	return await await this.preprocessNode(docStructure);
 };
 
-DocPreprocessor.prototype.preprocessNode = function (node, order = 1) {
+DocPreprocessor.prototype.preprocessNode = async function (node, order = 1) {
 	// expand shortcuts and casting values
 	if (isArray(node)) {
 		node = { stack: node };
@@ -37,67 +37,67 @@ DocPreprocessor.prototype.preprocessNode = function (node, order = 1) {
 	node.order = order;
 
 	if (node.columns) {
-		return this.preprocessColumns(node);
+		return await this.preprocessColumns(node);
 	} else if (node.stack) {
-		return this.preprocessVerticalContainer(node);
+		return await this.preprocessVerticalContainer(node);
 	} else if (node.ul) {
-		return this.preprocessList(node);
+		return await this.preprocessList(node);
 	} else if (node.ol) {
-		return this.preprocessList(node);
+		return await this.preprocessList(node);
 	} else if (node.table) {
-		return this.preprocessTable(node);
+		return await this.preprocessTable(node);
 	} else if (node.text !== undefined) {
-		return this.preprocessText(node);
+		return await this.preprocessText(node);
 	} else if (node.toc) {
-		return this.preprocessToc(node);
+		return await this.preprocessToc(node);
 	} else if (node.image) {
-		return this.preprocessImage(node);
+		return await this.preprocessImage(node);
 	} else if (node.svg) {
-		return this.preprocessSVG(node);
+		return await this.preprocessSVG(node);
 	} else if (node.canvas) {
-		return this.preprocessCanvas(node);
+		return await this.preprocessCanvas(node);
 	} else if (node.qr) {
-		return this.preprocessQr(node);
+		return await this.preprocessQr(node);
 	} else if (node.qrV2) {
-		return this.preprocessQr(node);
+		return await this.preprocessQr(node);
 	} else if (node.pageReference || node.textReference) {
-		return this.preprocessText(node);
+		return await this.preprocessText(node);
 	} else {
 		throw 'Unrecognized document structure: ' + JSON.stringify(node, fontStringify);
 	}
 };
 
-DocPreprocessor.prototype.preprocessColumns = function (node) {
+DocPreprocessor.prototype.preprocessColumns = async function (node) {
 	var columns = node.columns;
 
 	for (var i = 0, l = columns.length; i < l; i++) {
-		columns[i] = this.preprocessNode(columns[i], i);
+		columns[i] = await await this.preprocessNode(columns[i], i);
 	}
 
 	return node;
 };
 
-DocPreprocessor.prototype.preprocessVerticalContainer = function (node) {
+DocPreprocessor.prototype.preprocessVerticalContainer = async function (node) {
 	var items = node.stack;
 
 	for (var i = 0, l = items.length; i < l; i++) {
-		items[i] = this.preprocessNode(items[i], i);
+		items[i] = await await this.preprocessNode(items[i], i);
 	}
 
 	return node;
 };
 
-DocPreprocessor.prototype.preprocessList = function (node) {
+DocPreprocessor.prototype.preprocessList = async function (node) {
 	var items = node.ul || node.ol;
 
 	for (var i = 0, l = items.length; i < l; i++) {
-		items[i] = this.preprocessNode(items[i], i);
+		items[i] = await this.preprocessNode(items[i], i);
 	}
 
 	return node;
 };
 
-DocPreprocessor.prototype.preprocessTable = function (node) {
+DocPreprocessor.prototype.preprocessTable = async function (node) {
 	var col, row, cols, rows;
 
 	for (col = 0, cols = node.table.body[0].length; col < cols; col++) {
@@ -109,7 +109,7 @@ DocPreprocessor.prototype.preprocessTable = function (node) {
 					data = '';
 				}
 				if (!data._span) {
-					rowData[col] = this.preprocessNode(data, (col * node.table.body[0].length) + row);
+					rowData[col] = await this.preprocessNode(data, (col * node.table.body[0].length) + row);
 				}
 			}
 		}
@@ -118,7 +118,7 @@ DocPreprocessor.prototype.preprocessTable = function (node) {
 	return node;
 };
 
-DocPreprocessor.prototype.preprocessText = function (node) {
+DocPreprocessor.prototype.preprocessText = async function (node) {
 	if (node.tocItem) {
 		if (!isArray(node.tocItem)) {
 			node.tocItem = [node.tocItem];
@@ -188,7 +188,7 @@ DocPreprocessor.prototype.preprocessText = function (node) {
 	}
 
 	if (node.text && node.text.text) {
-		node.text = [this.preprocessNode(node.text)];
+		node.text = [await this.preprocessNode(node.text)];
 	} else if (isArray(node.text)) {
 		var isSetParentNode = false;
 		if (this.parentNode === null) {
@@ -197,7 +197,7 @@ DocPreprocessor.prototype.preprocessText = function (node) {
 		}
 
 		for (var i = 0, l = node.text.length; i < l; i++) {
-			node.text[i] = this.preprocessNode(node.text[i]);
+			node.text[i] = await this.preprocessNode(node.text[i]);
 		}
 
 		if (isSetParentNode) {
@@ -208,12 +208,12 @@ DocPreprocessor.prototype.preprocessText = function (node) {
 	return node;
 };
 
-DocPreprocessor.prototype.preprocessToc = function (node) {
+DocPreprocessor.prototype.preprocessToc = async function (node) {
 	if (!node.toc.id) {
 		node.toc.id = '_default_';
 	}
 
-	node.toc.title = node.toc.title ? this.preprocessNode(node.toc.title) : null;
+	node.toc.title = node.toc.title ? await this.preprocessNode(node.toc.title) : null;
 	node.toc._items = [];
 
 	if (this.tocs[node.toc.id]) {
@@ -229,26 +229,26 @@ DocPreprocessor.prototype.preprocessToc = function (node) {
 	return node;
 };
 
-DocPreprocessor.prototype.preprocessImage = function (node) {
+DocPreprocessor.prototype.preprocessImage = async function (node) {
 	if (!isUndefined(node.image.type) && !isUndefined(node.image.data) && (node.image.type === 'Buffer') && isArray(node.image.data)) {
 		node.image = Buffer.from(node.image.data);
 	}
 	return node;
 };
 
-DocPreprocessor.prototype.preprocessSVG = function (node) {
+DocPreprocessor.prototype.preprocessSVG = async function (node) {
 	return node;
 };
 
-DocPreprocessor.prototype.preprocessCanvas = function (node) {
+DocPreprocessor.prototype.preprocessCanvas = async function (node) {
 	return node;
 };
 
-DocPreprocessor.prototype.preprocessQr = function (node) {
+DocPreprocessor.prototype.preprocessQr = async function (node) {
 	return node;
 };
 
-DocPreprocessor.prototype._getNodeForNodeRef = function (node) {
+DocPreprocessor.prototype._getNodeForNodeRef = async function (node) {
 	if (this.parentNode) {
 		return this.parentNode;
 	}

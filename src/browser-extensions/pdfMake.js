@@ -1,18 +1,18 @@
-'use strict';
+"use strict";
 
-var isFunction = require('../helpers').isFunction;
-var isUndefined = require('../helpers').isUndefined;
-var isNull = require('../helpers').isNull;
-var FileSaver = require('file-saver');
+var isFunction = require("../helpers").isFunction;
+var isUndefined = require("../helpers").isUndefined;
+var isNull = require("../helpers").isNull;
+var FileSaver = require("file-saver");
 var saveAs = FileSaver.saveAs;
 
 var defaultClientFonts = {
 	Roboto: {
-		normal: 'Roboto-Regular.ttf',
-		bold: 'Roboto-Medium.ttf',
-		italics: 'Roboto-Italic.ttf',
-		bolditalics: 'Roboto-MediumItalic.ttf'
-	}
+		normal: "Roboto-Regular.ttf",
+		bold: "Roboto-Medium.ttf",
+		italics: "Roboto-Italic.ttf",
+		bolditalics: "Roboto-MediumItalic.ttf",
+	},
 };
 
 function Document(docDefinition, tableLayouts, fonts, vfs) {
@@ -25,13 +25,17 @@ function Document(docDefinition, tableLayouts, fonts, vfs) {
 function canCreatePdf() {
 	// Ensure the browser provides the level of support needed
 	try {
-		var arr = new Uint8Array(1)
-		var proto = { foo: function () { return 42 } }
-		Object.setPrototypeOf(proto, Uint8Array.prototype)
-		Object.setPrototypeOf(arr, proto)
-		return arr.foo() === 42
+		var arr = new Uint8Array(1);
+		var proto = {
+			foo: function () {
+				return 42;
+			},
+		};
+		Object.setPrototypeOf(proto, Uint8Array.prototype);
+		Object.setPrototypeOf(arr, proto);
+		return arr.foo() === 42;
 	} catch (e) {
-		return false
+		return false;
 	}
 }
 
@@ -41,19 +45,21 @@ Document.prototype._createDoc = function (options, cb) {
 		options.tableLayouts = this.tableLayouts;
 	}
 
-	var PdfPrinter = require('../printer');
+	var PdfPrinter = require("../printer");
 
 	var printer = new PdfPrinter(this.fonts);
-	require('fs').bindFS(this.vfs); // bind virtual file system to file system
+	require("fs").bindFS(this.vfs); // bind virtual file system to file system
 
 	if (!isFunction(cb)) {
+		console.warn(
+			"this is now a promise for a doc, synchronous createPdfKitDocument was is deprecated"
+		);
 		var doc = printer.createPdfKitDocument(this.docDefinition, options);
-
 		return doc;
 	}
 
-	var URLBrowserResolver = require('./URLBrowserResolver');
-	var urlResolver = new URLBrowserResolver(require('fs'));
+	var URLBrowserResolver = require("./URLBrowserResolver");
+	var urlResolver = new URLBrowserResolver(require("fs"));
 
 	for (var font in this.fonts) {
 		if (this.fonts.hasOwnProperty(font)) {
@@ -82,26 +88,36 @@ Document.prototype._createDoc = function (options, cb) {
 
 	var _this = this;
 
-	urlResolver.resolved().then(function () {
-		var doc = printer.createPdfKitDocument(_this.docDefinition, options);
+	urlResolver.resolved().then(
+		function () {
+			var doc = printer.createPdfKitDocument(_this.docDefinition, options);
 
-		cb(doc);
-	}, function (result) {
-		throw result;
-	});
+			if (doc.then) {
+				doc.then(cb).catch((e) => {
+					throw e;
+				});
+			} else {
+				cb(doc);
+			}
+			// console.log("createPdfKitDocument", doc)
+		},
+		function (result) {
+			throw result;
+		}
+	);
 };
 
 Document.prototype._flushDoc = function (doc, callback) {
 	var chunks = [];
 	var result;
 
-	doc.on('readable', function () {
+	doc.on("readable", function () {
 		var chunk;
 		while ((chunk = doc.read(9007199254740991)) !== null) {
 			chunks.push(chunk);
 		}
 	});
-	doc.on('end', function () {
+	doc.on("end", function () {
 		result = Buffer.concat(chunks);
 		callback(result, doc._pdfMakePages);
 	});
@@ -110,11 +126,12 @@ Document.prototype._flushDoc = function (doc, callback) {
 
 Document.prototype._getPages = function (options, cb) {
 	if (!cb) {
-		throw '_getPages is an async method and needs a callback argument';
+		throw "_getPages is an async method and needs a callback argument";
 	}
 	var _this = this;
 
 	this._createDoc(options, function (doc) {
+		console.log("_getPages=>_createDoc", options, "doc", doc);
 		_this._flushDoc(doc, function (ignoreBuffer, pages) {
 			cb(pages);
 		});
@@ -124,17 +141,17 @@ Document.prototype._getPages = function (options, cb) {
 Document.prototype._bufferToBlob = function (buffer) {
 	var blob;
 	try {
-		blob = new Blob([buffer], { type: 'application/pdf' });
+		blob = new Blob([buffer], { type: "application/pdf" });
 	} catch (e) {
 		// Old browser which can't handle it without making it an byte array (ie10)
-		if (e.name === 'InvalidStateError') {
+		if (e.name === "InvalidStateError") {
 			var byteArray = new Uint8Array(buffer);
-			blob = new Blob([byteArray.buffer], { type: 'application/pdf' });
+			blob = new Blob([byteArray.buffer], { type: "application/pdf" });
 		}
 	}
 
 	if (!blob) {
-		throw 'Could not generate blob';
+		throw "Could not generate blob";
 	}
 
 	return blob;
@@ -143,9 +160,9 @@ Document.prototype._bufferToBlob = function (buffer) {
 Document.prototype._openWindow = function () {
 	// we have to open the window immediately and store the reference
 	// otherwise popup blockers will stop us
-	var win = window.open('', '_blank');
+	var win = window.open("", "_blank");
 	if (win === null) {
-		throw 'Open PDF in new window blocked by browser';
+		throw "Open PDF in new window blocked by browser";
 	}
 
 	return win;
@@ -185,7 +202,6 @@ Document.prototype.open = function (options, win) {
 	this._openPdf(options, win);
 };
 
-
 Document.prototype.print = function (options, win) {
 	options = options || {};
 	options.autoPrint = true;
@@ -208,7 +224,7 @@ Document.prototype.download = function (defaultFileName, cb, options) {
 		defaultFileName = null;
 	}
 
-	defaultFileName = defaultFileName || 'file.pdf';
+	defaultFileName = defaultFileName || "file.pdf";
 	this.getBlob(function (result) {
 		saveAs(result, defaultFileName);
 
@@ -220,25 +236,25 @@ Document.prototype.download = function (defaultFileName, cb, options) {
 
 Document.prototype.getBase64 = function (cb, options) {
 	if (!cb) {
-		throw 'getBase64 is an async method and needs a callback argument';
+		throw "getBase64 is an async method and needs a callback argument";
 	}
 	this.getBuffer(function (buffer) {
-		cb(buffer.toString('base64'));
+		cb(buffer.toString("base64"));
 	}, options);
 };
 
 Document.prototype.getDataUrl = function (cb, options) {
 	if (!cb) {
-		throw 'getDataUrl is an async method and needs a callback argument';
+		throw "getDataUrl is an async method and needs a callback argument";
 	}
 	this.getBuffer(function (buffer) {
-		cb('data:application/pdf;base64,' + buffer.toString('base64'));
+		cb("data:application/pdf;base64," + buffer.toString("base64"));
 	}, options);
 };
 
 Document.prototype.getBlob = function (cb, options) {
 	if (!cb) {
-		throw 'getBlob is an async method and needs a callback argument';
+		throw "getBlob is an async method and needs a callback argument";
 	}
 	var that = this;
 	this.getBuffer(function (result) {
@@ -249,7 +265,7 @@ Document.prototype.getBlob = function (cb, options) {
 
 Document.prototype.getBuffer = function (cb, options) {
 	if (!cb) {
-		throw 'getBuffer is an async method and needs a callback argument';
+		throw "getBuffer is an async method and needs a callback argument";
 	}
 
 	var _this = this;
@@ -275,7 +291,7 @@ Document.prototype.getStream = function (options, cb) {
 module.exports = {
 	createPdf: function (docDefinition, tableLayouts, fonts, vfs) {
 		if (!canCreatePdf()) {
-			throw 'Your browser does not provide the level of support needed';
+			throw "Your browser does not provide the level of support needed";
 		}
 		return new Document(
 			docDefinition,
@@ -283,5 +299,5 @@ module.exports = {
 			fonts || global.pdfMake.fonts,
 			vfs || global.pdfMake.vfs
 		);
-	}
+	},
 };
